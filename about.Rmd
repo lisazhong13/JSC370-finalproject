@@ -1,0 +1,17 @@
+---
+title: "JSC370 Final Project"
+author: "Jingwen Zhong"
+output: 
+    html_document:
+        toc: TRUE
+        toc_float: TRUE
+---
+<br>
+
+Hello! I'm Jingwen, a third-year Data Science Specialist and Actuarial Science Major student at the University of Toronto with a passion for machine learning and LLMs.
+
+This is the website for my JSC370 final project, in my project, I focused on the question"How Do Socioeconomic and Demographic Factors Influence the Prevalence of Disabilities Across U.S. States". This project investigates how socioeconomic and demographic factors influence the prevalence of various disability types across U.S. states. Using data from the CDC’s Disability and Health Data System (DHDS), the American Community Survey, and the Kaiser Family Foundation, I merged and cleaned a multi-source dataset encompassing healthcare access, poverty levels, insurance coverage, and demographic indicators.
+
+Through exploratory analysis, geospatial mapping, ANOVA, and regression modeling, the study finds strong correlations between higher disability prevalence and poverty, limited insurance coverage, and public healthcare reliance. Medicaid and Medicare coverage are positively associated with disability prevalence, while employer-sponsored insurance shows a negative correlation. Regional disparities are also evident, with Southern states exhibiting higher disability rates.
+
+<br>
