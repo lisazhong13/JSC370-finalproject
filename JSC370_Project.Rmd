@@ -7,7 +7,7 @@ always_allow_html: true
 ---
 link to GitHub repository: https://github.com/lisazhong13/JSC370-finalproject
 
-downloadable report link: https://github.com/lisazhong13/JSC370-finalproject/JSC370-Project.pdf
+downloadable report link: https://github.com/lisazhong13/JSC370-finalproject/blob/main/JSC370_Project.pdf
 ```{r include=FALSE}
 # load all neccessary libraries
 library(httr)
@@ -45,11 +45,13 @@ I hypothesize that U.S. states with higher poverty rates, lower levels of health
 ### Methods
 
 #### Data Acquisition and Cleaning
+
+
 The primary dataset for this project is sourced from the Centers for Disease Control and Prevention (CDC) Disability and Health Data System (DHDS) through their public API. Given that the API has a 1000-row limit per request, the data was retrieved in chunks by utilizing the limit and offset parameters, and then loaded into R using the httr and readr libraries. The DHDS data contains information on the prevalence and the disabled population in 2021 and 2022 across various states in the U.S.
 
 Due to an API-related issue encountered during the final stages of the report preparation, I was unable to load the dataset directly via the API. As a result, I manually downloaded the dataset from the CDC website and can be found in the data folder. This dataset includes valuable data on disability prevalence and population distribution across states.
 
-To enhance the analysis and address my research questions more comprehensively, I supplemented the DHDS dataset with additional socioeconomic and demographic variables. Specifically, I scraped uninsured rate data from the American Community Survey (ACS) using the U.S. Census Bureau API. Furthermore, I downloaded various datasets from the Kaiser Family Foundation (KFF) website, including information on the poverty rate by age, healthcare access indicators such as health insurance coverage, hospital counts, Medicaid spending, and additional disability-related data. For this analysis, poverty is defined as the proportion of individuals living below the federal poverty line within each state. This is calculated as the percentage of individuals whose income falls below a specified threshold set by the federal government, adjusted annually for inflation. This metric provides insight into the economic conditions in each state and is used as a key indicator for analyzing socioeconomic disparities and their relationship with disability prevalence. Since Medicare is available primarily to individuals aged 65+, the variables `MedicareInsuranceCoverage` and `TotalMedicareEnrollees` serve as proxies for age structure across states.
+To enhance the analysis and address my research questions more comprehensively, I supplemented the DHDS dataset with additional socioeconomic and demographic variables. Specifically, I scraped uninsured rate data from the American Community Survey (ACS) using the U.S. Census Bureau API. Furthermore, I downloaded various datasets from the Kaiser Family Foundation (KFF) website, including information on the poverty rate by age, healthcare access indicators such as health insurance coverage, hospital counts, Medicaid spending, and additional disability-related data. In this study, both poverty and disability variables are expressed as proportions of the population at the state level. For instance, a value of 0.12 for `DisabilityPrevalence` indicates that 12% of the state's population reported having a disability. Since Medicare is available primarily to individuals aged 65+, the variables `MedicareInsuranceCoverage` and `TotalMedicareEnrollees` serve as proxies for age structure across states.
 
 These datasets were merged based on state names to ensure consistency. However, some locations in the primary dataset, such as "HHS Region 1-10," "Puerto Rico," "Guam," "U.S. Virgin Islands," and "United States, DC & Territories," were excluded from the final merged dataset due to their irrelevance to the state-level analysis. 
 
@@ -281,9 +283,12 @@ df_final
 
 #### Exploratory Data Analysis
 
+
 With this cleaned dataset, I now proceed to an exploratory analysis. Descriptive statistics and correlation matrices were used to explore relationships between variables. Geographic visualizations were created using `ggplot2` and `sf` to display spatial patterns in disability and socioeconomic factors.
 
 #### Statistical Analysis
+
+
 This study employed a combination of statistical modeling techniques to analyze the relationship between disability prevalence and socioeconomic factors across U.S. states.
 First, an Analysis of Variance (ANOVA) was conducted to determine whether the prevalence of various types of disabilities differed significantly between states. This approach assessed the extent of between-group versus within-group variability in disability prevalence.
 Next, a series of linear regression models were fitted independently for each disability type. These models included key socioeconomic variables as predictors and were evaluated using standard metrics: R-squared (R²) to quantify the proportion of variance in disability prevalence explained by the predictors; Regression coefficients to indicate the direction and magnitude of associations; P-values to assess statistical significance.
@@ -292,7 +297,9 @@ Lastly, Hierarchical Density-Based Spatial Clustering of Applications with Noise
 ### Results
 
 #### Summary Statistics
-A summary of the top 10 states with the highest disability prevalence is shown below (Table 1), including medians and interquartile ranges for key variables:
+
+
+A summary of the top 3 states with the highest disability prevalence is shown below (Table 1), including medians and interquartile ranges for key variables:
 
 ```{r echo=FALSE}
 # First, compute the median DisabilityPrevalence per state
@@ -300,13 +307,13 @@ top_states <- df_final %>%
   group_by(State) %>%
   summarise(MedianDisability = median(DisabilityPrevalence, na.rm = TRUE)) %>%
   arrange(desc(MedianDisability)) %>%
-  slice_head(n = 5) %>%
+  slice_head(n = 3) %>%
   pull(State)
 
 # Filter summary table to only top 10 states
-summary_top5 <- df_final %>%
+summary_top3 <- df_final %>%
   filter(State %in% top_states) %>%
-  select(DisabilityPrevalence, DisabilityPopulation, UninsuredRate, PovertyTotal, 
+  select(DisabilityPrevalence, UninsuredRate, PovertyTotal, 
          MilitaryInsuranceCoverage, Total.Hospitals, State) %>%
   group_by(State) %>%
   summarise(across(
@@ -320,11 +327,32 @@ summary_top5 <- df_final %>%
   )) %>%
   arrange(desc(`DisabilityPrevalence`))
 
-# Display
-kable(summary_top5, caption = "Table 1: Median [IQR] Summary Statistics for Top 5 States by Disability Prevalence in 2021")
+summary_top3_linebreak <- summary_top3 %>%
+  mutate(across(-State, ~ gsub(" \\[", " \\\\ [", .x))) %>%  # insert actual LaTeX linebreak
+  mutate(across(-State, ~ paste0("\\makecell[l]{", .x, "}")))  # [l] = left-align
+
+# Transpose
+transposed_table <- summary_top3_linebreak %>%
+  column_to_rownames("State") %>%
+  t() %>%
+  as.data.frame() %>%
+  rownames_to_column("Variable")
+
+# Format using kable
+kable(transposed_table,
+      format = "latex",
+      caption = "Transposed Summary Statistics for Top 3 States by Disability Prevalence in 2021",
+      booktabs = TRUE,
+      longtable = TRUE,
+      escape = FALSE) %>%
+  kable_styling(latex_options = c("striped", "repeat_header"), font_size = 9)
+
 ```
+For a full table of summary of median and IQR of selected variables in all states, please check out the appendix (https://lisazhong13.github.io/JSC370-finalproject/appendix.html)
 
 #### Disability Type Distribution
+
+
 Stacked bar plots (Figure 1) revealed that "Any Disability" dominates across all states. "Cognitive Disability", "Independent Living Disability", and "Mobility Disability" are visibly large across most states, suggesting that both mental and physical disabilities are significant components of disability prevalence. Some states may have a higher proportion of cognitive disabilities, possibly indicating different healthcare access or demographic variations. "Hearirng Disabilities" and "Vision Disabilities" appear in smaller proportions in most states.
 
 ```{r echo=FALSE}
@@ -345,6 +373,8 @@ ggplot(df_long, aes(x = State, y = Proportion, fill = Disability_Type)) +
 ```
 
 #### Correlation Insights
+
+
 Figure 2 reveals a strong positive correlation between `TotalMedicaidSpending` and `TotalMedicareEnrollees`, indicating states with more Medicare enrollees tend to have higher total Medicaid spending. They are also highly correlated with DisabilityMedicaidSpending, suggesting that disability-related Medicaid spending is a large component of total Medicaid spending. AnyDisability and PovertyTotal have a relatively high correlation, meaning that higher poverty levels are associated with a higher percentage of people reporting disabilities. There are also some negatively correlated factors, DisabilityMedicaidSpending and UninsuredRate have a moderate negative correlation, suggesting that as disability-related Medicaid spending increases, the uninsured rate tends to decrease. A similar negative correlation appear to TotalMedicaidSpending and UninsuredRate, implying that increased Medicaid spending is linked to a lower uninsured rate.
 
 ```{r echo=FALSE}
@@ -373,42 +403,9 @@ us_states <- st_read("cb_2018_us_state_500k/cb_2018_us_state_500k.shp")
 head(us_states)
 ```
 
-```{r warning=FALSE, echo=FALSE}
-# # Merge your dataset with the state shapefile
-# map_data <- left_join(us_states, df_final, by = c("NAME" = "State"))  # Ensure matching column names
-# 
-# # Convert `disabilityprevalence` to numeric (in case it's a character column)
-# map_data$AnyDisability <- as.numeric(map_data$AnyDisability)
-# 
-# # Define a color palette
-# pal <- colorBin("Reds", domain = map_data$AnyDisability, bins = 5)
-# 
-# # Create an interactive Leaflet map
-# leaflet(map_data) %>%
-#   addTiles() %>%  # Add base map
-#   addPolygons(
-#     fillColor = ~pal(AnyDisability),
-#     color = "white",  # Border color
-#     weight = 1,
-#     smoothFactor = 0.5,
-#     opacity = 1,
-#     fillOpacity = 0.7,
-#     label = ~paste0(NAME, ": ", AnyDisability, "%"),  # Hover label
-#     highlightOptions = highlightOptions(
-#       weight = 2,
-#       color = "#666",
-#       fillOpacity = 0.9,
-#       bringToFront = TRUE
-#     )
-#   ) %>%
-#   addLegend(pal = pal, values = ~AnyDisability, opacity = 0.7,
-#             title = "Disability Prevalence (%)", position = "bottomright") %>%
-#     addControl(
-#     html = HTML("<div style='font-size:18px; font-weight:bold; text-align:center;'>Figure 3: Disability Distribution by Region</div>"), 
-#     position = "topleft"
-#   )
-```
 #### Geographic Patterns
+
+
 The map (Figure 3) shows disability prevalence (%) across the United States, with different states shaded based on their percentage of the population with disabilities. Higher disability prevalence (darker red shades) is observed in Southern states such as Kentucky, New Mexico, Oklahoma, Arkansas, Louisiana, Alabama. Lower disability prevalence (lighter shades) appears in Western states like California, Utah, and Colorado, and in some parts of the Northeast. Alaska appears to have relatively higher disability prevalence compared to many other states. Disability prevalence is often correlated with poverty levels, healthcare access, and demographics.
 
 ```{r warning=FALSE, message=FALSE, echo=FALSE}
@@ -462,6 +459,7 @@ Comparing with the total poverty percentage per state, I observe similar density
 
 #### ANOVA Results
 
+
 ```{r echo=FALSE}
 # Define disability types
 disability_types <- c("SelfCareDisability", "HearingDisability", "VisionDisability",
@@ -506,12 +504,14 @@ anova_summary_table <- anova_summary_table %>%
   )
 
 # Optional: for R Markdown PDF output
-knitr::kable(anova_summary_table, caption = "Table 2: ANOVA Results for Disability Proportions Across States")
+knitr::kable(anova_summary_table, caption = "ANOVA Results for Disability Proportions Across States")
 ```
 
 To further investigate whether these observed geographic variations in disability prevalence are statistically significant, I conducted an ANOVA (Analysis of Variance) test. From Table 2, the ANOVA results showed p-values are all < 2e-16 (very close to 0). This means there is a strong statistical evidence that disability proportions significantly differ across states. Since p < 0.05, I reject the null hypothesis and conclude that disability proportions differ meaningfully across states beyond what could be attributed to random variation. By analyzing different disability types (e.g., mobility, cognitive, self-care), I can assess which forms of disability exhibit the most substantial regional disparities and how these differences align with socioeconomic patterns. The following table presents the ANOVA results, highlighting statistically significant variations across states.
 
 #### Regression Results
+
+
 Each disability type was regressed on a common set of socioeconomic predictors. The table below summarizes significant findings:
 ```{r echo=FALSE}
 # --- Setup (same as before) ---
@@ -567,7 +567,7 @@ if (knitr::is_html_output()) {
     kableExtra::row_spec(0, bold = TRUE)
 } else {
   knitr::kable(summary_table_clean,
-               caption = "Table 3: Comparison of Regression Coefficients Across Disabilities (Significant values marked with *, **, ***)",
+               caption = "Comparison of Regression Coefficients Across Disabilities (Significant values marked with *, **, ***)",
                format = "latex",
                booktabs = TRUE,
                longtable = TRUE,
@@ -575,10 +575,11 @@ if (knitr::is_html_output()) {
 }
 ```
 
-Table 2 highlight significant associations between various socioeconomic factors and disability prevalence across different disability types. Statistically significant coefficients (denoted by \*) identified the meaningful correlations betweeen predictors and disabilities, with significant 0s meaning no statistically significant correlation is found between the predictor and outcome, for example, the result showed no relationship between uninsured rate and hearing disability and independent living disability [more explanation]. Poverty levels show a strong positive correlation with disability prevalence, particularly for Mobility Disability, Cognitive Disability, and Any Disability. This suggests that individuals in higher poverty brackets are more likely to report disabilities, potentially due to limited access to healthcare and preventive services, greater exposure to environmental and occupational risk factors, and an increased likelihood of chronic health conditions. Medicare and Medicaid coverage also play a crucial role in disability prevalence. Medicare Insurance Coverage is significantly associated with higher prevalence of Vision Disability, Independent Living Disability, Mobility Disability, Cognitive Disability, and Any Disability. Given that Medicare primarily serves individuals aged 65 and older, as well as certain disabled individuals, this trend aligns with expectations that older populations and those with disabilities are more likely to be enrolled in Medicare. Similarly, Medicaid Insurance Coverage exhibits a significant positive relationship with Cognitive Disability and Self-Care Disability, reinforcing the connection between lower-income populations, Medicaid utilization, and higher disability rates. Employer-sponsored insurance coverage, on the other hand, is negatively associated with several disability types, including Hearing Disability, Independent Living Disability, Mobility Disability, and Any Disability. This suggests that individuals with employer-sponsored insurance are less likely to report disabilities, potentially due to better access to healthcare services, workplace accommodations, and overall improved socioeconomic conditions. While some variables, such as the uninsured rate, exhibit sporadic significance, their overall effect sizes are minimal, suggesting a limited impact on disability prevalence. Hospital-related factors, including Total Hospitals, Hospital Beds, and Total Medicare Enrollees, display weak or mixed effects, indicating that while healthcare infrastructure plays a role, it may not be a primary determinant of disability rates. Additionally, Disability Medicaid Spending is statistically significant in select cases but with small coefficient values, suggesting it is not a major explanatory factor in disability prevalence. These findings carry important policy implications. Given the strong link between poverty and disability, expanding access to preventive healthcare, rehabilitation services, and disability accommodations could help mitigate disparities. The significant association between Medicaid coverage and cognitive disabilities suggests that policies aimed at expanding mental health services could be particularly beneficial. Furthermore, states with aging populations, such as Florida, may see higher rates of hearing and vision-related disabilities, necessitating age-friendly healthcare policies and accessibility improvements.
+Table 3 highlight significant associations between various socioeconomic factors and disability prevalence across different disability types. Values listed as 0.00 indicate very small estimated coefficients (rounded to two decimals). Although the effect size is minimal, statistical significance arises due to consistent associations across states. Poverty levels show a strong positive correlation with disability prevalence, particularly for Mobility Disability, Cognitive Disability, and Any Disability. This suggests that individuals in higher poverty brackets are more likely to report disabilities, potentially due to limited access to healthcare and preventive services, greater exposure to environmental and occupational risk factors, and an increased likelihood of chronic health conditions. Medicare and Medicaid coverage also play a crucial role in disability prevalence. Medicare Insurance Coverage is significantly associated with higher prevalence of Vision Disability, Independent Living Disability, Mobility Disability, Cognitive Disability, and Any Disability. Given that Medicare primarily serves individuals aged 65 and older, as well as certain disabled individuals, this trend aligns with expectations that older populations and those with disabilities are more likely to be enrolled in Medicare. Similarly, Medicaid Insurance Coverage exhibits a significant positive relationship with Cognitive Disability and Self-Care Disability, reinforcing the connection between lower-income populations, Medicaid utilization, and higher disability rates. Employer-sponsored insurance coverage, on the other hand, is negatively associated with several disability types, including Hearing Disability, Independent Living Disability, Mobility Disability, and Any Disability. This suggests that individuals with employer-sponsored insurance are less likely to report disabilities, potentially due to better access to healthcare services, workplace accommodations, and overall improved socioeconomic conditions. While some variables, such as the uninsured rate, exhibit sporadic significance, their overall effect sizes are minimal, suggesting a limited impact on disability prevalence. Hospital-related factors, including Total Hospitals, Hospital Beds, and Total Medicare Enrollees, display weak or mixed effects, indicating that while healthcare infrastructure plays a role, it may not be a primary determinant of disability rates. Additionally, Disability Medicaid Spending is statistically significant in select cases but with small coefficient values, suggesting it is not a major explanatory factor in disability prevalence. These findings carry important policy implications. Given the strong link between poverty and disability, expanding access to preventive healthcare, rehabilitation services, and disability accommodations could help mitigate disparities. The significant association between Medicaid coverage and cognitive disabilities suggests that policies aimed at expanding mental health services could be particularly beneficial. Furthermore, states with aging populations, such as Florida, may see higher rates of hearing and vision-related disabilities, necessitating age-friendly healthcare policies and accessibility improvements.
 
 #### Clustering Results
-I applied HDBSCAN to identify clusters of U.S. states based on their poverty rate and disability prevalence. While the dataset is limited to 51 observations, the resulting clusters reveal meaningful groupings. As shown in Figure 5, states were assigned to three distinct clusters. One cluster includes states with both high poverty and high disability prevalence—potentially capturing structurally disadvantaged regions such as Kentucky, Mississippi, and West Virginia. Another group consists of states with moderate poverty but relatively low disability prevalence, which may reflect a balance between economic conditions and healthcare access. A third cluster, more broadly distributed, includes many states with high disability prevalence despite mid-range poverty rates. This pattern may be driven by aging populations or regional healthcare differences. Overall, the clustering highlights that the relationship between poverty and disability is complex and varies by context, reinforcing the need for region-specific policy responses.
+
+Although the sample size is small for clustering (n = 51), HDBSCAN was chosen due to its robustness to noise and ability to detect variable-density clusters. The results should be interpreted as exploratory. HDBSCAN identified clusters of U.S. states based on their poverty rate and disability prevalence. While the dataset is limited to 51 observations, the resulting clusters reveal meaningful groupings. As shown in Figure 5, states were assigned to three distinct clusters. One cluster includes states with both high poverty and high disability prevalence—potentially capturing structurally disadvantaged regions such as Kentucky, Mississippi, and West Virginia. Another group consists of states with moderate poverty but relatively low disability prevalence, which may reflect a balance between economic conditions and healthcare access. A third cluster, more broadly distributed, includes many states with high disability prevalence despite mid-range poverty rates. This pattern may be driven by aging populations or regional healthcare differences. Overall, the clustering highlights that the relationship between poverty and disability is complex and varies by context, reinforcing the need for region-specific policy responses.
 
 ```{r echo=FALSE}
 # Drop rows with any NA in numeric columns
@@ -611,6 +612,7 @@ ggplot(df_final_cleaned, aes(
 ```
 
 ### Conclusion and Summary
+
 
 This study found strong associations between disability prevalence and socioeconomic indicators across U.S. states. Poverty, public insurance reliance, and lack of employer insurance were key predictors. Age, inferred through Medicare enrollment, also played a substantial role. Specifically, poverty is positively correlated with Mobility Disability, Cognitive Disability, and Any Disability, while Medicaid and Medicare coverage are also significant predictors of disability prevalence. On the other hand, employer-sponsored insurance is negatively associated with disability rates, suggesting that access to workplace benefits may help mitigate disability risk.
 
