@@ -1,0 +1,623 @@
+---
+title: How do socioeconomic and demographic factors influence the prevalence of different
+  types of disabilities across U.S. states?
+author: "Jingwen Zhong"
+output: pdf_document
+always_allow_html: true
+---
+link to GitHub repository: https://github.com/lisazhong13/JSC370-finalproject
+
+downloadable report link: https://github.com/lisazhong13/JSC370-finalproject/JSC370-Project.pdf
+```{r include=FALSE}
+# load all neccessary libraries
+library(httr)
+library(readr)
+library(dplyr)
+library(rvest)
+library(jsonlite)
+library(tidyr)
+library(ggplot2)
+library(ggcorrplot)
+library(stats)
+library(cluster)
+library(knitr)
+library(kableExtra)
+library(tibble)
+library(sf)
+library(tmap)
+library(tidyverse)
+library(tigris)
+library(leaflet)
+library(htmltools)
+library(dbscan)
+library(plotly)
+library(viridis)  # optional for better color scale
+```
+
+### Introduction
+
+Disabilities affect millions of individuals across the United States, with significant variation in prevalence from state to state. These disparities are shaped by a range of socioeconomic and demographic factors, including income levels, education attainment, employment status, as well as demographic characteristics such as age, race, and ethnicity. Understanding these variations is critical, as the prevalence of disability can have profound implications for public health and policy.
+
+This project aims to explore the question: "How do socioeconomic indicators and demographic characteristics impact the prevalence of different types of disabilities across U.S. states?" To address this question, I have utilized publicly available data from various reliable sources, integrating information on disability prevalence with key economic and demographic variables. By examining the relationships between these factors, the study seeks to identify the underlying drivers of disability disparities, providing valuable insights that can inform policy decisions, guide resource allocation, and improve support services for individuals with disabilities across diverse communities.
+
+I hypothesize that U.S. states with higher poverty rates, lower levels of healthcare coverage, and greater economic inequality will experience higher prevalence rates of disabilities. In particular, I expect that state-level Medicaid and Medicare spending will have a positive correlation with reported disability rates, while employer-sponsored insurance coverage will be negatively correlated with disability prevalence. Additionally, demographic factors such as age will likely play a significant role in shaping disability patterns, especially considering that Medicare primarily serves older populations.
+
+### Methods
+
+#### Data Acquisition and Cleaning
+The primary dataset for this project is sourced from the Centers for Disease Control and Prevention (CDC) Disability and Health Data System (DHDS) through their public API. Given that the API has a 1000-row limit per request, the data was retrieved in chunks by utilizing the limit and offset parameters, and then loaded into R using the httr and readr libraries. The DHDS data contains information on the prevalence and the disabled population in 2021 and 2022 across various states in the U.S.
+
+Due to an API-related issue encountered during the final stages of the report preparation, I was unable to load the dataset directly via the API. As a result, I manually downloaded the dataset from the CDC website and can be found in the data folder. This dataset includes valuable data on disability prevalence and population distribution across states.
+
+To enhance the analysis and address my research questions more comprehensively, I supplemented the DHDS dataset with additional socioeconomic and demographic variables. Specifically, I scraped uninsured rate data from the American Community Survey (ACS) using the U.S. Census Bureau API. Furthermore, I downloaded various datasets from the Kaiser Family Foundation (KFF) website, including information on the poverty rate by age, healthcare access indicators such as health insurance coverage, hospital counts, Medicaid spending, and additional disability-related data. For this analysis, poverty is defined as the proportion of individuals living below the federal poverty line within each state. This is calculated as the percentage of individuals whose income falls below a specified threshold set by the federal government, adjusted annually for inflation. This metric provides insight into the economic conditions in each state and is used as a key indicator for analyzing socioeconomic disparities and their relationship with disability prevalence. Since Medicare is available primarily to individuals aged 65+, the variables `MedicareInsuranceCoverage` and `TotalMedicareEnrollees` serve as proxies for age structure across states.
+
+These datasets were merged based on state names to ensure consistency. However, some locations in the primary dataset, such as "HHS Region 1-10," "Puerto Rico," "Guam," "U.S. Virgin Islands," and "United States, DC & Territories," were excluded from the final merged dataset due to their irrelevance to the state-level analysis. 
+
+Since many socioeconomic variables were missing for 2022, I focused primarily on analyzing data from 2021. Data from 2022 were filtered out to ensure consistency in the analysis. I also renamed variables to make them more intuitive and changed some character variables into numerical formats for easier analysis.
+
+Finally, I addressed missing values by removing rows with incomplete data. The final cleaned dataset contained 376 entries and 29 variables.
+
+```{r include=FALSE}
+# # Base API endpoint
+# base_url <- "https://data.cdc.gov/resource/s2qv-b27b.csv"
+# 
+# # Function to fetch data with pagination
+# fetch_data <- function(offset) {
+#   url <- paste0(base_url, "?$limit=1000&$offset=", offset)
+#   response <- GET(url)
+# 
+#   # Check the response code
+#   if (status_code(response) != 200) {
+#     stop("Error: Unable to fetch data. Status code: ", status_code(response))
+#   }
+# 
+#   temp_file <- tempfile(fileext = ".csv")  # Temporary file to store data
+#   writeBin(content(response, "raw"), temp_file)  # Save content to temp file
+#   read_csv(temp_file)  # Read CSV into dataframe
+# }
+# 
+# # Fetch first 1000 rows
+# df1 <- fetch_data(0)
+# 
+# # Fetch next 1000 rows
+# df2 <- fetch_data(1000)
+# 
+# # Fetch next 1000 rows
+# df3 <- fetch_data(2000)
+# 
+# # Fetch remaining rows (592 rows)
+# df4 <- fetch_data(3000)
+# 
+# # Combine all dataframes
+# df_cdc <- bind_rows(df1, df2, df3, df4)
+# 
+# # Preview merged data
+# df_cdc
+```
+```{r include=FALSE}
+df_cdc <- read.csv("data/cdc.csv")
+```
+
+```{r include=FALSE}
+# Select and rename columns
+df_cdc_cleaned <- df_cdc %>% filter(Year == 2021) %>%
+  select(Location = LocationDesc, Disability = Response, 
+         Prevalence = Data_Value, DisabilityPopulation = WeightedNumber)
+
+# Preview the updated dataframe
+df_cdc_cleaned
+```
+
+```{r include=FALSE}
+# # Define API endpoint for uninsured rate (ACS 2021, Table B27010)
+# census2021_url <- "https://api.census.gov/data/2021/acs/acs1?get=NAME,B27010_001E,B27010_017E&for=state:*"
+# 
+# # Fetch data
+# response <- GET(census2021_url)
+# data <- content(response, as = "text")
+# json_data <- fromJSON(data)
+# 
+# # Convert to DataFrame
+# df_census_2021 <- as.data.frame(json_data[-1,], stringsAsFactors = FALSE)
+# colnames(df_census_2021) <- json_data[1,]  # Set column names
+# 
+# # Rename columns for clarity
+# df_census_2021 <- df_census_2021 %>%
+#   rename(
+#     State = NAME,
+#     Total_Population = B27010_001E,
+#     Uninsured_Population = B27010_017E
+#   ) %>%
+#   mutate(
+#     Total_Population = as.numeric(Total_Population),
+#     Uninsured_Population = as.numeric(Uninsured_Population),
+#     Uninsured_Rate = (Uninsured_Population / Total_Population) * 100
+#   ) %>%
+#   select(State, Uninsured_Rate)
+# 
+# # Preview data
+# df_census_2021
+```
+```{r include=FALSE}
+# Uninsured rate
+# Load the JSON file into R
+json_file_path <- "data/acs1.json"  # Provide the correct path to your saved JSON file
+json_data <- fromJSON(json_file_path)
+
+# Convert JSON data to a data frame
+df_census_2021 <- as.data.frame(json_data[-1,], stringsAsFactors = FALSE)
+
+# Set the first row as column names
+colnames(df_census_2021) <- json_data[1,]
+
+# Rename columns for clarity
+df_census_2021 <- df_census_2021 %>%
+  rename(
+    State = NAME,
+    Total_Population = B27010_001E,
+    Uninsured_Population = B27010_017E
+  ) %>%
+  mutate(
+    Total_Population = as.numeric(Total_Population),
+    Uninsured_Population = as.numeric(Uninsured_Population),
+    Uninsured_Rate = (Uninsured_Population / Total_Population) * 100
+  ) %>%
+  select(State, Uninsured_Rate)
+
+# Preview data
+df_census_2021
+```
+
+```{r include=FALSE}
+# Standardize state names in df_cdc_cleaned
+df_cdc_cleaned <- df_cdc_cleaned %>%
+  mutate(Location = tolower(Location))
+
+# Standardize state names in df_census_2021 and df_census_2022
+df_census_2021 <- df_census_2021 %>%
+  mutate(State = tolower(State))
+
+# Merge 2021 data with 2021 uninsured rate
+df_merged <- df_cdc_cleaned %>%
+  inner_join(df_census_2021, by = c("Location" = "State"))
+
+# Preview final merged dataset
+df_merged
+```
+```{r include=FALSE}
+poverty <- read.csv("data/Poverty_by_Age.csv")
+insurance <- read.csv("data/Health_Insurance_Coverage_of_the_Total_Population.csv")
+disability_percentage <- read.csv("data/Disability_Percentage.csv")
+hospital <- read.csv("data/Hospitals.csv")
+medicaid <- read.csv("data/Medicaid_Spending.csv")
+poverty
+insurance
+disability_percentage
+hospital
+medicaid
+```
+```{r include=FALSE}
+poverty <- poverty %>%
+  mutate(Location = tolower(Location))
+insurance <- insurance %>%
+  mutate(Location = tolower(Location))
+hospital <- hospital %>%
+  mutate(Location = tolower(Location))
+disability_percentage <- disability_percentage %>%
+  mutate(Location = tolower(Location))
+medicaid <- medicaid %>%
+  mutate(Location = tolower(Location))
+
+# Start by merging df_merged with the first dataset
+df_final <- df_merged %>%
+  inner_join(poverty, by = "Location") %>%
+  inner_join(insurance, by = "Location") %>%
+  inner_join(disability_percentage, by = "Location") %>%
+  inner_join(hospital, by = "Location") %>%
+  inner_join(medicaid, by = "Location")
+
+df_final <- df_final %>% drop_na()
+# Preview the final merged dataset
+df_final
+```
+```{r include=FALSE}
+# Convert relevant columns to numeric
+df_final <- df_final %>%
+  mutate(
+    Military = as.numeric(Military),
+    Total.Medicare.Part.A.Enrollees = as.numeric(gsub(",", "", Total.Medicare.Part.A.Enrollees)),
+    Total.Hospitals = as.numeric(Total.Hospitals),
+    Total.Hospital.Beds = as.numeric(gsub(",", "", Total.Hospital.Beds)),
+    Short.Stay.Hospitals = as.numeric(Short.Stay.Hospitals),
+    Short.Stay.Hospital.Beds = as.numeric(gsub(",", "", Short.Stay.Hospital.Beds)),
+    Critical.Access.Hospitals = as.numeric(Critical.Access.Hospitals),
+    Critical.Access.Hospital.Beds = as.numeric(gsub(",", "", Critical.Access.Hospital.Beds)),
+    All.Other.Hospitals = as.numeric(All.Other.Hospitals),
+    All.Other.Hospital.Beds = as.numeric(gsub(",", "", All.Other.Hospital.Beds)),
+    Seniors = as.numeric(gsub("[$,]", "", Seniors)),  # Remove $ and ,
+    Individuals.with.Disabilities = as.numeric(gsub("[$,]", "", Individuals.with.Disabilities)),
+    Adult = as.numeric(gsub("[$,]", "", Adult)),
+    Children = as.numeric(gsub("[$,]", "", Children)),
+    Newly.Eligible.Adult = as.numeric(gsub("[$,]", "", Newly.Eligible.Adult)),
+    Total.y = as.numeric(gsub("[$,]", "", Total.y))
+  ) %>%
+select(
+    State = Location, 
+    Disability, 
+    DisabilityPrevalence = Prevalence, 
+    DisabilityPopulation, 
+    UninsuredRate = Uninsured_Rate, 
+    PovertyChildren = Children.0.18, 
+    PovertyAdult = Adults.19.64, 
+    PovertySenior = X65., 
+    PovertyTotal = Total.x, 
+    EmployerInsuranceCoverage = Employer, 
+    MedicaidInsuranceCoverage = Medicaid, 
+    MedicareInsuranceCoverage = Medicare, 
+    MilitaryInsuranceCoverage = Military, 
+    SelfCareDisability = Self.Care, 
+    HearingDisability = Hearing, 
+    VisionDisability = Seeing, 
+    IndependentLivingDisability = Living.Independently, 
+    MobilityDisability = Ambulatory, 
+    CognitiveDisability = Cognitive, 
+    AnyDisability = Any.Disability, 
+    TotalMedicareEnrollees = Total.Medicare.Part.A.Enrollees, 
+    Total.Hospitals, 
+    Total.Hospital.Beds, 
+    TotalHospitalBedsPer1000Enrollees = Total.Hospital.Beds.Per.1.000.Part.A.Enrollees, 
+    SeniorMedicaidSpending = Seniors, 
+    DisabilityMedicaidSpending = Individuals.with.Disabilities, 
+    AdultMedicaidSpending = Adult, 
+    ChildrenMedicaidSpending = Children, 
+    TotalMedicaidSpending = Total.y
+  )
+df_final <- df_final %>% drop_na()
+```
+
+```{r include=FALSE}
+df_final
+```
+
+#### Exploratory Data Analysis
+
+With this cleaned dataset, I now proceed to an exploratory analysis. Descriptive statistics and correlation matrices were used to explore relationships between variables. Geographic visualizations were created using `ggplot2` and `sf` to display spatial patterns in disability and socioeconomic factors.
+
+#### Statistical Analysis
+This study employed a combination of statistical modeling techniques to analyze the relationship between disability prevalence and socioeconomic factors across U.S. states.
+First, an Analysis of Variance (ANOVA) was conducted to determine whether the prevalence of various types of disabilities differed significantly between states. This approach assessed the extent of between-group versus within-group variability in disability prevalence.
+Next, a series of linear regression models were fitted independently for each disability type. These models included key socioeconomic variables as predictors and were evaluated using standard metrics: R-squared (R²) to quantify the proportion of variance in disability prevalence explained by the predictors; Regression coefficients to indicate the direction and magnitude of associations; P-values to assess statistical significance.
+Lastly, Hierarchical Density-Based Spatial Clustering of Applications with Noise (HDBSCAN) was applied to identify latent groupings of states with similar disability and socioeconomic profiles. This unsupervised machine learning method required preprocessing, which included scaling numeric features and excluding records with missing values.
+
+### Results
+
+#### Summary Statistics
+A summary of the top 10 states with the highest disability prevalence is shown below (Table 1), including medians and interquartile ranges for key variables:
+
+```{r echo=FALSE}
+# First, compute the median DisabilityPrevalence per state
+top_states <- df_final %>%
+  group_by(State) %>%
+  summarise(MedianDisability = median(DisabilityPrevalence, na.rm = TRUE)) %>%
+  arrange(desc(MedianDisability)) %>%
+  slice_head(n = 5) %>%
+  pull(State)
+
+# Filter summary table to only top 10 states
+summary_top5 <- df_final %>%
+  filter(State %in% top_states) %>%
+  select(DisabilityPrevalence, DisabilityPopulation, UninsuredRate, PovertyTotal, 
+         MilitaryInsuranceCoverage, Total.Hospitals, State) %>%
+  group_by(State) %>%
+  summarise(across(
+    where(is.numeric),
+    ~{
+      med <- median(.x, na.rm = TRUE)
+      q1 <- quantile(.x, 0.25, na.rm = TRUE)
+      q3 <- quantile(.x, 0.75, na.rm = TRUE)
+      sprintf("%.3f [%.3f–%.3f]", med, q1, q3)
+    }
+  )) %>%
+  arrange(desc(`DisabilityPrevalence`))
+
+# Display
+kable(summary_top5, caption = "Table 1: Median [IQR] Summary Statistics for Top 5 States by Disability Prevalence in 2021")
+```
+
+#### Disability Type Distribution
+Stacked bar plots (Figure 1) revealed that "Any Disability" dominates across all states. "Cognitive Disability", "Independent Living Disability", and "Mobility Disability" are visibly large across most states, suggesting that both mental and physical disabilities are significant components of disability prevalence. Some states may have a higher proportion of cognitive disabilities, possibly indicating different healthcare access or demographic variations. "Hearirng Disabilities" and "Vision Disabilities" appear in smaller proportions in most states.
+
+```{r echo=FALSE}
+# Select relevant columns
+df_long <- df_final %>%
+  select(State, SelfCareDisability, HearingDisability, VisionDisability, 
+         IndependentLivingDisability, MobilityDisability, CognitiveDisability, AnyDisability) %>%
+  pivot_longer(cols = -State, names_to = "Disability_Type", values_to = "Proportion")
+
+ggplot(df_long, aes(x = State, y = Proportion, fill = Disability_Type)) +
+  geom_bar(stat = "identity", position = "fill") +
+  labs(title = "Figure 1: Proportion of Each Disability Type in Each State",
+       x = "State", y = "Proportion", fill = "Disability Type") +
+  scale_fill_brewer(palette = "Set2") +
+  coord_flip() +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1))
+```
+
+#### Correlation Insights
+Figure 2 reveals a strong positive correlation between `TotalMedicaidSpending` and `TotalMedicareEnrollees`, indicating states with more Medicare enrollees tend to have higher total Medicaid spending. They are also highly correlated with DisabilityMedicaidSpending, suggesting that disability-related Medicaid spending is a large component of total Medicaid spending. AnyDisability and PovertyTotal have a relatively high correlation, meaning that higher poverty levels are associated with a higher percentage of people reporting disabilities. There are also some negatively correlated factors, DisabilityMedicaidSpending and UninsuredRate have a moderate negative correlation, suggesting that as disability-related Medicaid spending increases, the uninsured rate tends to decrease. A similar negative correlation appear to TotalMedicaidSpending and UninsuredRate, implying that increased Medicaid spending is linked to a lower uninsured rate.
+
+```{r echo=FALSE}
+# Assuming `df_final` is your dataset
+numeric_vars <- df_final %>% select(AnyDisability, PovertyTotal, TotalMedicaidSpending, TotalMedicareEnrollees, DisabilityMedicaidSpending, UninsuredRate)
+
+# Compute correlation matrix
+cor_matrix <- cor(numeric_vars, use = "complete.obs")
+
+# Plot the correlation heatmap with a legend title
+ggcorrplot(cor_matrix, 
+           lab = TRUE,             # Display correlation values
+           hc.order = TRUE,        # Hierarchical clustering order
+           type = "lower",         # Show lower triangle
+           colors = c("blue", "white", "red"),  # Color gradient
+           legend.title = "Correlation") +  # Set the legend title
+  ggtitle("Figure 2: Correlation Matrix of Disability & Economic Factors") +  # Add plot title
+  theme(plot.title = element_text(hjust = 0.5, size = 14))  # Center title
+```
+
+```{r include=FALSE}
+# Example if the files are in your working directory
+us_states <- st_read("cb_2018_us_state_500k/cb_2018_us_state_500k.shp")
+
+# Preview the data
+head(us_states)
+```
+
+```{r warning=FALSE, echo=FALSE}
+# # Merge your dataset with the state shapefile
+# map_data <- left_join(us_states, df_final, by = c("NAME" = "State"))  # Ensure matching column names
+# 
+# # Convert `disabilityprevalence` to numeric (in case it's a character column)
+# map_data$AnyDisability <- as.numeric(map_data$AnyDisability)
+# 
+# # Define a color palette
+# pal <- colorBin("Reds", domain = map_data$AnyDisability, bins = 5)
+# 
+# # Create an interactive Leaflet map
+# leaflet(map_data) %>%
+#   addTiles() %>%  # Add base map
+#   addPolygons(
+#     fillColor = ~pal(AnyDisability),
+#     color = "white",  # Border color
+#     weight = 1,
+#     smoothFactor = 0.5,
+#     opacity = 1,
+#     fillOpacity = 0.7,
+#     label = ~paste0(NAME, ": ", AnyDisability, "%"),  # Hover label
+#     highlightOptions = highlightOptions(
+#       weight = 2,
+#       color = "#666",
+#       fillOpacity = 0.9,
+#       bringToFront = TRUE
+#     )
+#   ) %>%
+#   addLegend(pal = pal, values = ~AnyDisability, opacity = 0.7,
+#             title = "Disability Prevalence (%)", position = "bottomright") %>%
+#     addControl(
+#     html = HTML("<div style='font-size:18px; font-weight:bold; text-align:center;'>Figure 3: Disability Distribution by Region</div>"), 
+#     position = "topleft"
+#   )
+```
+#### Geographic Patterns
+The map (Figure 3) shows disability prevalence (%) across the United States, with different states shaded based on their percentage of the population with disabilities. Higher disability prevalence (darker red shades) is observed in Southern states such as Kentucky, New Mexico, Oklahoma, Arkansas, Louisiana, Alabama. Lower disability prevalence (lighter shades) appears in Western states like California, Utah, and Colorado, and in some parts of the Northeast. Alaska appears to have relatively higher disability prevalence compared to many other states. Disability prevalence is often correlated with poverty levels, healthcare access, and demographics.
+
+```{r warning=FALSE, message=FALSE, echo=FALSE}
+# Standardize the case of 'State' and 'NAME' to lowercase for matching
+us_states$NAME <- tolower(us_states$NAME)
+df_final$State <- tolower(df_final$State)
+
+# Join data
+map_data <- left_join(us_states, df_final, by = c("NAME" = "State"))
+map_data$AnyDisability <- as.numeric(map_data$AnyDisability)
+
+# Plot static map
+ggplot(map_data) +
+  geom_sf(aes(fill = AnyDisability), color = "white", size = 0.2) +
+  scale_fill_viridis(
+    name = "Disability Prevalence (%)",
+    option = "C", direction = -1, na.value = "grey90"
+  ) +
+  labs(title = "Figure 3: Disability Distribution by Region") +
+  coord_sf(xlim = c(-170, -60) , ylim = c(20, 80)) +  # Restrict longitude
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 10)
+  )
+```
+
+```{r echo=FALSE}
+# Convert PovertyTotal to numeric if needed
+map_data$PovertyTotal <- as.numeric(map_data$PovertyTotal)
+
+# Plot static poverty map
+ggplot(map_data) +
+  geom_sf(aes(fill = PovertyTotal), color = "white", size = 0.2) +
+  scale_fill_viridis(
+    name = "Poverty Rate (%)",
+    option = "C", direction = -1, na.value = "grey90"
+  ) +
+  labs(title = "Figure 4: Poverty Distribution by Region") +
+  coord_sf(xlim = c(-170, -60), ylim = c(20, 80)) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(size = 14, hjust = 0.5),
+    legend.title = element_text(size = 10),
+    legend.text = element_text(size = 10)
+  )
+```
+
+Comparing with the total poverty percentage per state, I observe similar density distribution across the country. This can be explained that higher poverty rates leads to lower healthcare access, which could then lead to higher disability rates. States with better healthcare infrastructure and higher income levels tend to have lower disability rates.
+
+#### ANOVA Results
+
+```{r echo=FALSE}
+# Define disability types
+disability_types <- c("SelfCareDisability", "HearingDisability", "VisionDisability",
+                      "IndependentLivingDisability", "MobilityDisability", "CognitiveDisability",
+                      "AnyDisability")
+
+# Initialize an empty list to store ANOVA results
+anova_summary_list <- list()
+
+# Perform ANOVA and extract statistics
+for (disability in disability_types) {
+  aov_result <- aov(df_final[[disability]] ~ df_final$State)
+  summary_result <- summary(aov_result)[[1]]
+  
+  anova_df <- as.data.frame(summary_result) %>%
+    rownames_to_column(var = "Term") %>%
+    filter(Term == "df_final$State") %>%
+    mutate(Disability = disability) %>%
+    select(Disability, Df, `Sum Sq`, `Mean Sq`, `F value`, `Pr(>F)`)
+  
+  anova_summary_list[[disability]] <- anova_df
+}
+
+# Combine all results
+anova_summary_table <- bind_rows(anova_summary_list)
+
+# Format p-values and add stars
+anova_summary_table <- anova_summary_table %>%
+  mutate(
+    `Pr(>F)` = ifelse(`Pr(>F)` < 0.001, "<0.001***",
+                      ifelse(`Pr(>F)` < 0.01, paste0(sprintf("%.3f", `Pr(>F)`), "**"),
+                             ifelse(`Pr(>F)` < 0.05, paste0(sprintf("%.3f", `Pr(>F)`), "*"),
+                                    sprintf("%.3f", `Pr(>F)`))))
+  )
+
+# Round numeric columns
+anova_summary_table <- anova_summary_table %>%
+  mutate(
+    `Sum Sq` = round(`Sum Sq`, 3),
+    `Mean Sq` = round(`Mean Sq`, 3),
+    `F value` = round(`F value`, 3)
+  )
+
+# Optional: for R Markdown PDF output
+knitr::kable(anova_summary_table, caption = "Table 2: ANOVA Results for Disability Proportions Across States")
+```
+
+To further investigate whether these observed geographic variations in disability prevalence are statistically significant, I conducted an ANOVA (Analysis of Variance) test. From Table 2, the ANOVA results showed p-values are all < 2e-16 (very close to 0). This means there is a strong statistical evidence that disability proportions significantly differ across states. Since p < 0.05, I reject the null hypothesis and conclude that disability proportions differ meaningfully across states beyond what could be attributed to random variation. By analyzing different disability types (e.g., mobility, cognitive, self-care), I can assess which forms of disability exhibit the most substantial regional disparities and how these differences align with socioeconomic patterns. The following table presents the ANOVA results, highlighting statistically significant variations across states.
+
+#### Regression Results
+Each disability type was regressed on a common set of socioeconomic predictors. The table below summarizes significant findings:
+```{r echo=FALSE}
+# --- Setup (same as before) ---
+disability_types <- c("SelfCareDisability", "HearingDisability", "VisionDisability",
+                      "IndependentLivingDisability", "MobilityDisability", "CognitiveDisability",
+                      "AnyDisability")
+
+predictors <- c("DisabilityPrevalence", "UninsuredRate", "PovertyTotal", "MedicaidInsuranceCoverage",
+                "EmployerInsuranceCoverage", "MedicareInsuranceCoverage", "Total.Hospitals",
+                "Total.Hospital.Beds", "TotalMedicareEnrollees", "DisabilityMedicaidSpending")
+
+summary_list <- list()
+
+# --- Collect model summaries ---
+for (target in disability_types) {
+  formula <- as.formula(paste(target, "~", paste(predictors, collapse = " + ")))
+  model <- lm(formula, data = df_final)
+
+  model_summary <- summary(model)$coefficients %>%
+    as.data.frame() %>%
+    rownames_to_column(var = "Predictor") %>%
+    filter(Predictor != "(Intercept)") %>%
+    select(Predictor, Estimate, `Pr(>|t|)`) %>%
+    mutate(
+      Disability = gsub("Disability", "", target),
+      stars = case_when(
+        `Pr(>|t|)` < 0.001 ~ "***",
+        `Pr(>|t|)` < 0.01 ~ "**",
+        `Pr(>|t|)` < 0.05 ~ "*",
+        TRUE ~ ""
+      ),
+      Estimate = sprintf("%.2f", Estimate),
+      Estimate = paste0(Estimate, stars)
+    ) %>%
+    select(Disability, Predictor, Estimate)
+
+  summary_list[[target]] <- model_summary
+}
+
+# --- Reshape table to match Table 1 format ---
+summary_table_clean <- bind_rows(summary_list) %>%
+  pivot_wider(names_from = Disability, values_from = Estimate) %>%
+  rename(`Predictor` = Predictor)
+
+# --- Output with clean formatting ---
+if (knitr::is_html_output()) {
+  knitr::kable(summary_table_clean,
+               caption = "Table 3: Comparison of Regression Coefficients Across Disabilities (Significant values marked with *, **, ***)",
+               escape = FALSE,  # Let stars render
+               format = "html") %>%
+    kableExtra::kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed", "responsive")) %>%
+    kableExtra::column_spec(1, bold = TRUE, width = "6cm") %>%
+    kableExtra::row_spec(0, bold = TRUE)
+} else {
+  knitr::kable(summary_table_clean,
+               caption = "Table 3: Comparison of Regression Coefficients Across Disabilities (Significant values marked with *, **, ***)",
+               format = "latex",
+               booktabs = TRUE,
+               longtable = TRUE,
+               escape = FALSE)
+}
+```
+
+Table 2 highlight significant associations between various socioeconomic factors and disability prevalence across different disability types. Statistically significant coefficients (denoted by \*) identified the meaningful correlations betweeen predictors and disabilities, with significant 0s meaning no statistically significant correlation is found between the predictor and outcome, for example, the result showed no relationship between uninsured rate and hearing disability and independent living disability [more explanation]. Poverty levels show a strong positive correlation with disability prevalence, particularly for Mobility Disability, Cognitive Disability, and Any Disability. This suggests that individuals in higher poverty brackets are more likely to report disabilities, potentially due to limited access to healthcare and preventive services, greater exposure to environmental and occupational risk factors, and an increased likelihood of chronic health conditions. Medicare and Medicaid coverage also play a crucial role in disability prevalence. Medicare Insurance Coverage is significantly associated with higher prevalence of Vision Disability, Independent Living Disability, Mobility Disability, Cognitive Disability, and Any Disability. Given that Medicare primarily serves individuals aged 65 and older, as well as certain disabled individuals, this trend aligns with expectations that older populations and those with disabilities are more likely to be enrolled in Medicare. Similarly, Medicaid Insurance Coverage exhibits a significant positive relationship with Cognitive Disability and Self-Care Disability, reinforcing the connection between lower-income populations, Medicaid utilization, and higher disability rates. Employer-sponsored insurance coverage, on the other hand, is negatively associated with several disability types, including Hearing Disability, Independent Living Disability, Mobility Disability, and Any Disability. This suggests that individuals with employer-sponsored insurance are less likely to report disabilities, potentially due to better access to healthcare services, workplace accommodations, and overall improved socioeconomic conditions. While some variables, such as the uninsured rate, exhibit sporadic significance, their overall effect sizes are minimal, suggesting a limited impact on disability prevalence. Hospital-related factors, including Total Hospitals, Hospital Beds, and Total Medicare Enrollees, display weak or mixed effects, indicating that while healthcare infrastructure plays a role, it may not be a primary determinant of disability rates. Additionally, Disability Medicaid Spending is statistically significant in select cases but with small coefficient values, suggesting it is not a major explanatory factor in disability prevalence. These findings carry important policy implications. Given the strong link between poverty and disability, expanding access to preventive healthcare, rehabilitation services, and disability accommodations could help mitigate disparities. The significant association between Medicaid coverage and cognitive disabilities suggests that policies aimed at expanding mental health services could be particularly beneficial. Furthermore, states with aging populations, such as Florida, may see higher rates of hearing and vision-related disabilities, necessitating age-friendly healthcare policies and accessibility improvements.
+
+#### Clustering Results
+I applied HDBSCAN to identify clusters of U.S. states based on their poverty rate and disability prevalence. While the dataset is limited to 51 observations, the resulting clusters reveal meaningful groupings. As shown in Figure 5, states were assigned to three distinct clusters. One cluster includes states with both high poverty and high disability prevalence—potentially capturing structurally disadvantaged regions such as Kentucky, Mississippi, and West Virginia. Another group consists of states with moderate poverty but relatively low disability prevalence, which may reflect a balance between economic conditions and healthcare access. A third cluster, more broadly distributed, includes many states with high disability prevalence despite mid-range poverty rates. This pattern may be driven by aging populations or regional healthcare differences. Overall, the clustering highlights that the relationship between poverty and disability is complex and varies by context, reinforcing the need for region-specific policy responses.
+
+```{r echo=FALSE}
+# Drop rows with any NA in numeric columns
+df_numeric <- df_final %>%
+  select(where(is.numeric)) %>%
+  drop_na()
+
+# Remove 'Year' column before scaling
+df_numeric_noyear <- df_numeric
+
+# Normalize the numeric data (excluding Year)
+df_scaled <- scale(df_numeric_noyear)
+
+# Run HDBSCAN
+hdb <- hdbscan(df_scaled, minPts = 10)
+
+# Add clusters back to original (non-normalized) rows
+df_final_cleaned <- df_final %>%
+  filter(complete.cases(select(., where(is.numeric)))) %>%
+  mutate(cluster = as.factor(hdb$cluster))
+
+ggplot(df_final_cleaned, aes(
+  x = PovertyTotal,
+  y = DisabilityPrevalence,
+  color = cluster,
+  text = paste("State:", State)
+)) +
+  geom_point() +
+  labs(title = "Figure 5: HDBSCAN Clustering of States Based on Disability and Poverty")
+```
+
+### Conclusion and Summary
+
+This study found strong associations between disability prevalence and socioeconomic indicators across U.S. states. Poverty, public insurance reliance, and lack of employer insurance were key predictors. Age, inferred through Medicare enrollment, also played a substantial role. Specifically, poverty is positively correlated with Mobility Disability, Cognitive Disability, and Any Disability, while Medicaid and Medicare coverage are also significant predictors of disability prevalence. On the other hand, employer-sponsored insurance is negatively associated with disability rates, suggesting that access to workplace benefits may help mitigate disability risk.
+
+Age was indirectly represented in the models through Medicare enrollment rates. As expected, higher Medicare coverage—often associated with older adults—was a strong predictor of increased disability prevalence. These findings confirm that both economic and demographic dimensions contribute meaningfully to differences in disability across states.
+
+Preliminary geospatial analysis shows that disability prevalence is higher in Southern states and lower in Western and Northeastern states. This aligns with socioeconomic disparities, where states with lower income levels and weaker healthcare infrastructure tend to experience higher disability rates. Additionally, correlation analysis indicates that higher Medicaid spending is linked to lower uninsured rates, reinforcing the role of public health programs in supporting individuals with disabilities.  
+
+The clustering analysis using HDBSCAN revealed that U.S. states group into distinct clusters based on their disability prevalence and poverty rates. Despite the small sample size, the results highlighted patterns not captured by simple correlations—such as a cluster of states with disproportionately high disability despite moderate poverty levels, potentially driven by aging populations or healthcare access. Other clusters reflected more direct links between economic disadvantage and disability. These findings suggest that disability disparities are shaped by multifaceted, region-specific factors, reinforcing the value of tailored public health strategies.
+
+These findings can be contextualized within current healthcare policies and state-level economic programs. For example, several states with high disability prevalence and poverty—such as Kentucky and Mississippi—have historically limited Medicaid coverage or delayed expansion under the Affordable Care Act. In contrast, states like Massachusetts and Colorado, which fall into low-disability clusters, offer more comprehensive insurance coverage and disability-related services. These spatial and statistical associations suggest that policy interventions such as Medicaid expansion, improved access to mental health services, and support for aging populations could be particularly impactful in high-burden regions. Encouraging employer-sponsored insurance and addressing socioeconomic inequities could also help mitigate disability disparities in vulnerable populations.

@@ -1,0 +1,57 @@
+---
+title: "Visualization"
+output:
+  html_document:
+    toc: true
+    toc_depth: 2
+    theme: cosmo
+    highlight: tango
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+source("vis_code.R")
+```
+
+### Map View {.tabset}
+
+#### Disability Prevalence by State
+This choropleth map shows the percentage of the population reporting any disability in each U.S. state. Darker shades indicate higher disability prevalence. Patterns reveal that Southern states tend to have higher reported disability rates, reflecting regional socioeconomic and healthcare disparities.
+```{r echo=FALSE}
+plot_disability_map()
+```
+
+#### Poverty Rate by State
+This choropleth map presents the poverty rate across U.S. states. Higher poverty levels are indicated with darker red shades. The map highlights that states in the South and parts of the West experience higher poverty rates, which often coincide with higher disability prevalence observed in the previous map.
+```{r echo=FALSE}
+plot_poverty_map()
+```
+
+
+### Clustering View {.tabset}
+
+#### HDBSCAN Clustering
+This scatterplot uses HDBSCAN clustering to group states based on their disability prevalence and poverty rate. Each point represents a state, with colors denoting cluster membership. The visualization identifies distinguishable state groupings, such as high-poverty/high-disability clusters and low-poverty/low-disability clusters, offering insight into shared characteristics among states.
+```{r echo=FALSE}
+plot_cluster_scatter()
+```
+
+
+### Distribution View {.tabset}
+
+#### Disability Prevalence Histogram
+This histogram shows the distribution of disability prevalence across states. Most states cluster around 10%–15% prevalence, though a few states report notably higher rates.
+```{r echo=FALSE}
+plot_disability_hist()
+```
+
+#### Poverty Rate Histogram
+This histogram shows the distribution of poverty rates among states. The majority of states have poverty rates between 10% and 15%, with some Southern states exhibiting higher concentrations.
+```{r echo=FALSE}
+plot_poverty_hist()
+```
+
+#### Insurance Coverage Boxplot
+This boxplot compares the distribution of coverage rates for employer-sponsored insurance, Medicaid, and Medicare across states. It highlights how Medicaid and Medicare vary more widely, often corresponding to state-level socioeconomic profiles.
+```{r echo=FALSE, warning=FALSE}
+plot_insurance_boxplot()

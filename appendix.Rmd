@@ -1,0 +1,167 @@
+---
+title: "Appendix: Full State-Level Summary Table"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(httr)
+library(readr)
+library(dplyr)
+library(rvest)
+library(jsonlite)
+library(tidyr)
+library(ggplot2)
+library(ggcorrplot)
+library(stats)
+library(cluster)
+library(knitr)
+library(kableExtra)
+library(tibble)
+library(sf)
+library(tmap)
+library(tidyverse)
+library(tigris)
+library(leaflet)
+library(htmltools)
+
+# Load and prepare data
+df_cdc <- read.csv("data/cdc.csv")
+df_cdc_cleaned <- df_cdc %>% filter(Year == 2021) %>%
+  select(Location = LocationDesc, Disability = Response, 
+         Prevalence = Data_Value, DisabilityPopulation = WeightedNumber)
+json_file_path <- "data/acs1.json"  # Provide the correct path to your saved JSON file
+json_data <- fromJSON(json_file_path)
+df_census_2021 <- as.data.frame(json_data[-1,], stringsAsFactors = FALSE)
+colnames(df_census_2021) <- json_data[1,]
+df_census_2021 <- df_census_2021 %>%
+  rename(
+    State = NAME,
+    Total_Population = B27010_001E,
+    Uninsured_Population = B27010_017E
+  ) %>%
+  mutate(
+    Total_Population = as.numeric(Total_Population),
+    Uninsured_Population = as.numeric(Uninsured_Population),
+    Uninsured_Rate = (Uninsured_Population / Total_Population) * 100
+  ) %>%
+  select(State, Uninsured_Rate)
+df_cdc_cleaned <- df_cdc_cleaned %>%
+  mutate(Location = tolower(Location))
+df_census_2021 <- df_census_2021 %>%
+  mutate(State = tolower(State))
+df_merged <- df_cdc_cleaned %>%
+  inner_join(df_census_2021, by = c("Location" = "State"))
+poverty <- read.csv("data/Poverty_by_Age.csv")
+insurance <- read.csv("data/Health_Insurance_Coverage_of_the_Total_Population.csv")
+disability_percentage <- read.csv("data/Disability_Percentage.csv")
+hospital <- read.csv("data/Hospitals.csv")
+medicaid <- read.csv("data/Medicaid_Spending.csv")
+poverty <- poverty %>%
+  mutate(Location = tolower(Location))
+insurance <- insurance %>%
+  mutate(Location = tolower(Location))
+hospital <- hospital %>%
+  mutate(Location = tolower(Location))
+disability_percentage <- disability_percentage %>%
+  mutate(Location = tolower(Location))
+medicaid <- medicaid %>%
+  mutate(Location = tolower(Location))
+df_final <- df_merged %>%
+  inner_join(poverty, by = "Location") %>%
+  inner_join(insurance, by = "Location") %>%
+  inner_join(disability_percentage, by = "Location") %>%
+  inner_join(hospital, by = "Location") %>%
+  inner_join(medicaid, by = "Location")
+df_final <- df_final %>% drop_na()
+# Convert relevant columns to numeric
+df_final <- df_final %>%
+  mutate(
+    Military = as.numeric(Military),
+    Total.Medicare.Part.A.Enrollees = as.numeric(gsub(",", "", Total.Medicare.Part.A.Enrollees)),
+    Total.Hospitals = as.numeric(Total.Hospitals),
+    Total.Hospital.Beds = as.numeric(gsub(",", "", Total.Hospital.Beds)),
+    Short.Stay.Hospitals = as.numeric(Short.Stay.Hospitals),
+    Short.Stay.Hospital.Beds = as.numeric(gsub(",", "", Short.Stay.Hospital.Beds)),
+    Critical.Access.Hospitals = as.numeric(Critical.Access.Hospitals),
+    Critical.Access.Hospital.Beds = as.numeric(gsub(",", "", Critical.Access.Hospital.Beds)),
+    All.Other.Hospitals = as.numeric(All.Other.Hospitals),
+    All.Other.Hospital.Beds = as.numeric(gsub(",", "", All.Other.Hospital.Beds)),
+    Seniors = as.numeric(gsub("[$,]", "", Seniors)),  # Remove $ and ,
+    Individuals.with.Disabilities = as.numeric(gsub("[$,]", "", Individuals.with.Disabilities)),
+    Adult = as.numeric(gsub("[$,]", "", Adult)),
+    Children = as.numeric(gsub("[$,]", "", Children)),
+    Newly.Eligible.Adult = as.numeric(gsub("[$,]", "", Newly.Eligible.Adult)),
+    Total.y = as.numeric(gsub("[$,]", "", Total.y))
+  ) %>%
+  select(
+    State = Location, 
+    Disability, 
+    DisabilityPrevalence = Prevalence, 
+    DisabilityPopulation, 
+    UninsuredRate = Uninsured_Rate, 
+    PovertyChildren = Children.0.18, 
+    PovertyAdult = Adults.19.64, 
+    PovertySenior = X65., 
+    PovertyTotal = Total.x, 
+    EmployerInsuranceCoverage = Employer, 
+    MedicaidInsuranceCoverage = Medicaid, 
+    MedicareInsuranceCoverage = Medicare, 
+    MilitaryInsuranceCoverage = Military, 
+    SelfCareDisability = Self.Care, 
+    HearingDisability = Hearing, 
+    VisionDisability = Seeing, 
+    IndependentLivingDisability = Living.Independently, 
+    MobilityDisability = Ambulatory, 
+    CognitiveDisability = Cognitive, 
+    AnyDisability = Any.Disability, 
+    TotalMedicareEnrollees = Total.Medicare.Part.A.Enrollees, 
+    Total.Hospitals, 
+    Total.Hospital.Beds, 
+    TotalHospitalBedsPer1000Enrollees = Total.Hospital.Beds.Per.1.000.Part.A.Enrollees, 
+    SeniorMedicaidSpending = Seniors, 
+    DisabilityMedicaidSpending = Individuals.with.Disabilities, 
+    AdultMedicaidSpending = Adult, 
+    ChildrenMedicaidSpending = Children, 
+    TotalMedicaidSpending = Total.y
+  )
+df_final <- df_final %>% drop_na()
+```
+
+```{r include=FALSE}
+# First, compute the median DisabilityPrevalence per state
+top_states <- df_final %>%
+  group_by(State) %>%
+  summarise(MedianDisability = median(DisabilityPrevalence, na.rm = TRUE)) %>%
+  arrange(desc(MedianDisability)) %>%
+  slice_head(n = 3) %>%
+  pull(State)
+
+# Filter summary table to only top 10 states
+summary <- df_final %>%
+  select(DisabilityPrevalence, UninsuredRate, PovertyTotal, 
+         MilitaryInsuranceCoverage, Total.Hospitals, State) %>%
+  group_by(State) %>%
+  summarise(across(
+    where(is.numeric),
+    ~{
+      med <- median(.x, na.rm = TRUE)
+      q1 <- quantile(.x, 0.25, na.rm = TRUE)
+      q3 <- quantile(.x, 0.75, na.rm = TRUE)
+      sprintf("%.3f [%.3f–%.3f]", med, q1, q3)
+    }
+  )) %>%
+  arrange(desc(`DisabilityPrevalence`))
+
+summary_linebreak <- summary %>%
+  mutate(across(-State, ~ linebreak(gsub(" \\[", "<br>[", .x), align = "l")))
+```
+
+```{r echo=FALSE}
+# Format using kable
+kable(summary_linebreak,
+      format = "html",
+      caption = "Transposed Summary Statistics for States by Disability Prevalence in 2021",
+      booktabs = TRUE,
+      longtable = TRUE,
+      escape = FALSE) %>% kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed"))
+```

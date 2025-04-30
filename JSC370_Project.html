@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Jingwen Zhong" />
+
+
+<title>How do socioeconomic and demographic factors influence the prevalence of different types of disabilities across U.S. states?</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">JSC370 Final Project</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="vis.html">Visualization</a>
+</li>
+<li>
+  <a href="JSC370_Project.html">Report</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="appendix.html">Appendix</a>
+</li>
+<li>
+  <a href="https://github.com/lisazhong13/JSC370-finalproject/JSC370_Project.pdf">Report (downloadable PDF version)</a>
+</li>
+<li>
+  <a href="https://github.com/lisazhong13/JSC370-finalproject">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://jsc370.github.io/JSC370-2025/">JSC370 Home</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">How do socioeconomic and demographic
+factors influence the prevalence of different types of disabilities
+across U.S. states?</h1>
+<h4 class="author">Jingwen Zhong</h4>
+
+</div>
+
+
+<p>link to GitHub repository: <a
+href="https://github.com/lisazhong13/JSC370-finalproject"
+class="uri">https://github.com/lisazhong13/JSC370-finalproject</a></p>
+<p>downloadable report link: <a
+href="https://github.com/lisazhong13/JSC370-finalproject/JSC370-Project.pdf"
+class="uri">https://github.com/lisazhong13/JSC370-finalproject/JSC370-Project.pdf</a></p>
+<div id="introduction" class="section level3">
+<h3>Introduction</h3>
+<p>Disabilities affect millions of individuals across the United States,
+with significant variation in prevalence from state to state. These
+disparities are shaped by a range of socioeconomic and demographic
+factors, including income levels, education attainment, employment
+status, as well as demographic characteristics such as age, race, and
+ethnicity. Understanding these variations is critical, as the prevalence
+of disability can have profound implications for public health and
+policy.</p>
+<p>This project aims to explore the question: “How do socioeconomic
+indicators and demographic characteristics impact the prevalence of
+different types of disabilities across U.S. states?” To address this
+question, I have utilized publicly available data from various reliable
+sources, integrating information on disability prevalence with key
+economic and demographic variables. By examining the relationships
+between these factors, the study seeks to identify the underlying
+drivers of disability disparities, providing valuable insights that can
+inform policy decisions, guide resource allocation, and improve support
+services for individuals with disabilities across diverse
+communities.</p>
+<p>I hypothesize that U.S. states with higher poverty rates, lower
+levels of healthcare coverage, and greater economic inequality will
+experience higher prevalence rates of disabilities. In particular, I
+expect that state-level Medicaid and Medicare spending will have a
+positive correlation with reported disability rates, while
+employer-sponsored insurance coverage will be negatively correlated with
+disability prevalence. Additionally, demographic factors such as age
+will likely play a significant role in shaping disability patterns,
+especially considering that Medicare primarily serves older
+populations.</p>
+</div>
+<div id="methods" class="section level3">
+<h3>Methods</h3>
+<div id="data-acquisition-and-cleaning" class="section level4">
+<h4>Data Acquisition and Cleaning</h4>
+<p>The primary dataset for this project is sourced from the Centers for
+Disease Control and Prevention (CDC) Disability and Health Data System
+(DHDS) through their public API. Given that the API has a 1000-row limit
+per request, the data was retrieved in chunks by utilizing the limit and
+offset parameters, and then loaded into R using the httr and readr
+libraries. The DHDS data contains information on the prevalence and the
+disabled population in 2021 and 2022 across various states in the
+U.S.</p>
+<p>Due to an API-related issue encountered during the final stages of
+the report preparation, I was unable to load the dataset directly via
+the API. As a result, I manually downloaded the dataset from the CDC
+website and can be found in the data folder. This dataset includes
+valuable data on disability prevalence and population distribution
+across states.</p>
+<p>To enhance the analysis and address my research questions more
+comprehensively, I supplemented the DHDS dataset with additional
+socioeconomic and demographic variables. Specifically, I scraped
+uninsured rate data from the American Community Survey (ACS) using the
+U.S. Census Bureau API. Furthermore, I downloaded various datasets from
+the Kaiser Family Foundation (KFF) website, including information on the
+poverty rate by age, healthcare access indicators such as health
+insurance coverage, hospital counts, Medicaid spending, and additional
+disability-related data. For this analysis, poverty is defined as the
+proportion of individuals living below the federal poverty line within
+each state. This is calculated as the percentage of individuals whose
+income falls below a specified threshold set by the federal government,
+adjusted annually for inflation. This metric provides insight into the
+economic conditions in each state and is used as a key indicator for
+analyzing socioeconomic disparities and their relationship with
+disability prevalence. Since Medicare is available primarily to
+individuals aged 65+, the variables
+<code>MedicareInsuranceCoverage</code> and
+<code>TotalMedicareEnrollees</code> serve as proxies for age structure
+across states.</p>
+<p>These datasets were merged based on state names to ensure
+consistency. However, some locations in the primary dataset, such as
+“HHS Region 1-10,” “Puerto Rico,” “Guam,” “U.S. Virgin Islands,” and
+“United States, DC &amp; Territories,” were excluded from the final
+merged dataset due to their irrelevance to the state-level analysis.</p>
+<p>Since many socioeconomic variables were missing for 2022, I focused
+primarily on analyzing data from 2021. Data from 2022 were filtered out
+to ensure consistency in the analysis. I also renamed variables to make
+them more intuitive and changed some character variables into numerical
+formats for easier analysis.</p>
+<p>Finally, I addressed missing values by removing rows with incomplete
+data. The final cleaned dataset contained 376 entries and 29
+variables.</p>
+</div>
+<div id="exploratory-data-analysis" class="section level4">
+<h4>Exploratory Data Analysis</h4>
+<p>With this cleaned dataset, I now proceed to an exploratory analysis.
+Descriptive statistics and correlation matrices were used to explore
+relationships between variables. Geographic visualizations were created
+using <code>ggplot2</code> and <code>sf</code> to display spatial
+patterns in disability and socioeconomic factors.</p>
+</div>
+<div id="statistical-analysis" class="section level4">
+<h4>Statistical Analysis</h4>
+<p>This study employed a combination of statistical modeling techniques
+to analyze the relationship between disability prevalence and
+socioeconomic factors across U.S. states. First, an Analysis of Variance
+(ANOVA) was conducted to determine whether the prevalence of various
+types of disabilities differed significantly between states. This
+approach assessed the extent of between-group versus within-group
+variability in disability prevalence. Next, a series of linear
+regression models were fitted independently for each disability type.
+These models included key socioeconomic variables as predictors and were
+evaluated using standard metrics: R-squared (R²) to quantify the
+proportion of variance in disability prevalence explained by the
+predictors; Regression coefficients to indicate the direction and
+magnitude of associations; P-values to assess statistical significance.
+Lastly, Hierarchical Density-Based Spatial Clustering of Applications
+with Noise (HDBSCAN) was applied to identify latent groupings of states
+with similar disability and socioeconomic profiles. This unsupervised
+machine learning method required preprocessing, which included scaling
+numeric features and excluding records with missing values.</p>
+</div>
+</div>
+<div id="results" class="section level3">
+<h3>Results</h3>
+<div id="summary-statistics" class="section level4">
+<h4>Summary Statistics</h4>
+<p>A summary of the top 10 states with the highest disability prevalence
+is shown below (Table 1), including medians and interquartile ranges for
+key variables:</p>
+<table style="width:100%;">
+<caption>Table 1: Median [IQR] Summary Statistics for Top 5 States by
+Disability Prevalence in 2021</caption>
+<colgroup>
+<col width="6%" />
+<col width="13%" />
+<col width="22%" />
+<col width="12%" />
+<col width="12%" />
+<col width="16%" />
+<col width="16%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">State</th>
+<th align="left">DisabilityPrevalence</th>
+<th align="left">DisabilityPopulation</th>
+<th align="left">UninsuredRate</th>
+<th align="left">PovertyTotal</th>
+<th align="left">MilitaryInsuranceCoverage</th>
+<th align="left">Total.Hospitals</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">kentucky</td>
+<td align="left">14.200 [9.425–22.825]</td>
+<td align="left">501267.500 [354497.750–854452.750]</td>
+<td align="left">0.964 [0.964–0.964]</td>
+<td align="left">0.165 [0.165–0.165]</td>
+<td align="left">0.012 [0.012–0.012]</td>
+<td align="left">114.000 [114.000–114.000]</td>
+</tr>
+<tr class="even">
+<td align="left">arkansas</td>
+<td align="left">12.900 [7.525–21.950]</td>
+<td align="left">301037.000 [186469.500–500431.250]</td>
+<td align="left">1.443 [1.443–1.443]</td>
+<td align="left">0.164 [0.164–0.164]</td>
+<td align="left">0.015 [0.015–0.015]</td>
+<td align="left">109.000 [109.000–109.000]</td>
+</tr>
+<tr class="odd">
+<td align="left">louisiana</td>
+<td align="left">12.550 [7.100–21.450]</td>
+<td align="left">436514.000 [253025.250–740477.000]</td>
+<td align="left">1.006 [1.006–1.006]</td>
+<td align="left">0.196 [0.196–0.196]</td>
+<td align="left">0.015 [0.015–0.015]</td>
+<td align="left">209.000 [209.000–209.000]</td>
+</tr>
+<tr class="even">
+<td align="left">alabama</td>
+<td align="left">12.300 [5.675–20.825]</td>
+<td align="left">470071.000 [249220.250–879040.000]</td>
+<td align="left">0.953 [0.953–0.953]</td>
+<td align="left">0.160 [0.160–0.160]</td>
+<td align="left">0.021 [0.021–0.021]</td>
+<td align="left">115.000 [115.000–115.000]</td>
+</tr>
+<tr class="odd">
+<td align="left">oklahoma</td>
+<td align="left">12.050 [7.875–20.600]</td>
+<td align="left">359280.000 [235176.500–634578.000]</td>
+<td align="left">1.928 [1.928–1.928]</td>
+<td align="left">0.155 [0.155–0.155]</td>
+<td align="left">0.023 [0.023–0.023]</td>
+<td align="left">147.000 [147.000–147.000]</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="disability-type-distribution" class="section level4">
+<h4>Disability Type Distribution</h4>
+<p>Stacked bar plots (Figure 1) revealed that “Any Disability” dominates
+across all states. “Cognitive Disability”, “Independent Living
+Disability”, and “Mobility Disability” are visibly large across most
+states, suggesting that both mental and physical disabilities are
+significant components of disability prevalence. Some states may have a
+higher proportion of cognitive disabilities, possibly indicating
+different healthcare access or demographic variations. “Hearirng
+Disabilities” and “Vision Disabilities” appear in smaller proportions in
+most states.</p>
+<p><img src="JSC370_Project_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
+</div>
+<div id="correlation-insights" class="section level4">
+<h4>Correlation Insights</h4>
+<p>Figure 2 reveals a strong positive correlation between
+<code>TotalMedicaidSpending</code> and
+<code>TotalMedicareEnrollees</code>, indicating states with more
+Medicare enrollees tend to have higher total Medicaid spending. They are
+also highly correlated with DisabilityMedicaidSpending, suggesting that
+disability-related Medicaid spending is a large component of total
+Medicaid spending. AnyDisability and PovertyTotal have a relatively high
+correlation, meaning that higher poverty levels are associated with a
+higher percentage of people reporting disabilities. There are also some
+negatively correlated factors, DisabilityMedicaidSpending and
+UninsuredRate have a moderate negative correlation, suggesting that as
+disability-related Medicaid spending increases, the uninsured rate tends
+to decrease. A similar negative correlation appear to
+TotalMedicaidSpending and UninsuredRate, implying that increased
+Medicaid spending is linked to a lower uninsured rate.</p>
+<p><img src="JSC370_Project_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+</div>
+<div id="geographic-patterns" class="section level4">
+<h4>Geographic Patterns</h4>
+<p>The map (Figure 3) shows disability prevalence (%) across the United
+States, with different states shaded based on their percentage of the
+population with disabilities. Higher disability prevalence (darker red
+shades) is observed in Southern states such as Kentucky, New Mexico,
+Oklahoma, Arkansas, Louisiana, Alabama. Lower disability prevalence
+(lighter shades) appears in Western states like California, Utah, and
+Colorado, and in some parts of the Northeast. Alaska appears to have
+relatively higher disability prevalence compared to many other states.
+Disability prevalence is often correlated with poverty levels,
+healthcare access, and demographics.</p>
+<p><img src="JSC370_Project_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="JSC370_Project_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p>Comparing with the total poverty percentage per state, I observe
+similar density distribution across the country. This can be explained
+that higher poverty rates leads to lower healthcare access, which could
+then lead to higher disability rates. States with better healthcare
+infrastructure and higher income levels tend to have lower disability
+rates.</p>
+</div>
+<div id="anova-results" class="section level4">
+<h4>ANOVA Results</h4>
+<table>
+<caption>Table 2: ANOVA Results for Disability Proportions Across
+States</caption>
+<colgroup>
+<col width="40%" />
+<col width="4%" />
+<col width="10%" />
+<col width="11%" />
+<col width="18%" />
+<col width="14%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Disability</th>
+<th align="right">Df</th>
+<th align="right">Sum Sq</th>
+<th align="right">Mean Sq</th>
+<th align="right">F value</th>
+<th align="left">Pr(&gt;F)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">SelfCareDisability</td>
+<td align="right">46</td>
+<td align="right">0.005</td>
+<td align="right">0.000</td>
+<td align="right">4.694363e+28</td>
+<td align="left">&lt;0.001***</td>
+</tr>
+<tr class="even">
+<td align="left">HearingDisability</td>
+<td align="right">46</td>
+<td align="right">0.011</td>
+<td align="right">0.000</td>
+<td align="right">5.828494e+28</td>
+<td align="left">&lt;0.001***</td>
+</tr>
+<tr class="odd">
+<td align="left">VisionDisability</td>
+<td align="right">46</td>
+<td align="right">0.011</td>
+<td align="right">0.000</td>
+<td align="right">1.388229e+29</td>
+<td align="left">&lt;0.001***</td>
+</tr>
+<tr class="even">
+<td align="left">IndependentLivingDisability</td>
+<td align="right">46</td>
+<td align="right">0.026</td>
+<td align="right">0.001</td>
+<td align="right">9.304790e+28</td>
+<td align="left">&lt;0.001***</td>
+</tr>
+<tr class="odd">
+<td align="left">MobilityDisability</td>
+<td align="right">46</td>
+<td align="right">0.048</td>
+<td align="right">0.001</td>
+<td align="right">6.440861e+28</td>
+<td align="left">&lt;0.001***</td>
+</tr>
+<tr class="even">
+<td align="left">CognitiveDisability</td>
+<td align="right">46</td>
+<td align="right">0.032</td>
+<td align="right">0.001</td>
+<td align="right">1.418426e+29</td>
+<td align="left">&lt;0.001***</td>
+</tr>
+<tr class="odd">
+<td align="left">AnyDisability</td>
+<td align="right">46</td>
+<td align="right">0.131</td>
+<td align="right">0.003</td>
+<td align="right">1.271539e+29</td>
+<td align="left">&lt;0.001***</td>
+</tr>
+</tbody>
+</table>
+<p>To further investigate whether these observed geographic variations
+in disability prevalence are statistically significant, I conducted an
+ANOVA (Analysis of Variance) test. From Table 2, the ANOVA results
+showed p-values are all &lt; 2e-16 (very close to 0). This means there
+is a strong statistical evidence that disability proportions
+significantly differ across states. Since p &lt; 0.05, I reject the null
+hypothesis and conclude that disability proportions differ meaningfully
+across states beyond what could be attributed to random variation. By
+analyzing different disability types (e.g., mobility, cognitive,
+self-care), I can assess which forms of disability exhibit the most
+substantial regional disparities and how these differences align with
+socioeconomic patterns. The following table presents the ANOVA results,
+highlighting statistically significant variations across states.</p>
+</div>
+<div id="regression-results" class="section level4">
+<h4>Regression Results</h4>
+Each disability type was regressed on a common set of socioeconomic
+predictors. The table below summarizes significant findings:
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+Table 3: Comparison of Regression Coefficients Across Disabilities
+(Significant values marked with <em>, <strong>, </strong></em>)
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;font-weight: bold;">
+Predictor
+</th>
+<th style="text-align:left;font-weight: bold;">
+SelfCare
+</th>
+<th style="text-align:left;font-weight: bold;">
+Hearing
+</th>
+<th style="text-align:left;font-weight: bold;">
+Vision
+</th>
+<th style="text-align:left;font-weight: bold;">
+IndependentLiving
+</th>
+<th style="text-align:left;font-weight: bold;">
+Mobility
+</th>
+<th style="text-align:left;font-weight: bold;">
+Cognitive
+</th>
+<th style="text-align:left;font-weight: bold;">
+Any
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;width: 6cm; font-weight: bold;">
+DisabilityPrevalence
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; font-weight: bold;">
+UninsuredRate
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+<td style="text-align:left;">
+0.00*
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; font-weight: bold;">
+PovertyTotal
+</td>
+<td style="text-align:left;">
+0.05***
+</td>
+<td style="text-align:left;">
+-0.02
+</td>
+<td style="text-align:left;">
+0.15***
+</td>
+<td style="text-align:left;">
+0.06**
+</td>
+<td style="text-align:left;">
+0.34***
+</td>
+<td style="text-align:left;">
+0.09***
+</td>
+<td style="text-align:left;">
+0.34***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; font-weight: bold;">
+MedicaidInsuranceCoverage
+</td>
+<td style="text-align:left;">
+0.03***
+</td>
+<td style="text-align:left;">
+-0.01
+</td>
+<td style="text-align:left;">
+-0.02*
+</td>
+<td style="text-align:left;">
+0.04*
+</td>
+<td style="text-align:left;">
+-0.03
+</td>
+<td style="text-align:left;">
+0.06**
+</td>
+<td style="text-align:left;">
+0.03
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; font-weight: bold;">
+EmployerInsuranceCoverage
+</td>
+<td style="text-align:left;">
+-0.01
+</td>
+<td style="text-align:left;">
+-0.06***
+</td>
+<td style="text-align:left;">
+-0.02*
+</td>
+<td style="text-align:left;">
+-0.05**
+</td>
+<td style="text-align:left;">
+-0.03
+</td>
+<td style="text-align:left;">
+-0.01
+</td>
+<td style="text-align:left;">
+-0.07
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; font-weight: bold;">
+MedicareInsuranceCoverage
+</td>
+<td style="text-align:left;">
+0.06***
+</td>
+<td style="text-align:left;">
+0.02
+</td>
+<td style="text-align:left;">
+0.01
+</td>
+<td style="text-align:left;">
+0.15***
+</td>
+<td style="text-align:left;">
+0.12***
+</td>
+<td style="text-align:left;">
+0.17***
+</td>
+<td style="text-align:left;">
+0.26***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; font-weight: bold;">
+Total.Hospitals
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+0.00***
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+0.00**
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+<td style="text-align:left;">
+0.00***
+</td>
+<td style="text-align:left;">
+0.00***
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; font-weight: bold;">
+Total.Hospital.Beds
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+-0.00*
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+-0.00***
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; font-weight: bold;">
+TotalMedicareEnrollees
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+<td style="text-align:left;">
+-0.00*
+</td>
+<td style="text-align:left;">
+-0.00*
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;width: 6cm; font-weight: bold;">
+DisabilityMedicaidSpending
+</td>
+<td style="text-align:left;">
+-0.00*
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+<td style="text-align:left;">
+-0.00**
+</td>
+<td style="text-align:left;">
+0.00
+</td>
+<td style="text-align:left;">
+-0.00
+</td>
+</tr>
+</tbody>
+</table>
+<p>Table 2 highlight significant associations between various
+socioeconomic factors and disability prevalence across different
+disability types. Statistically significant coefficients (denoted by *)
+identified the meaningful correlations betweeen predictors and
+disabilities, with significant 0s meaning no statistically significant
+correlation is found between the predictor and outcome, for example, the
+result showed no relationship between uninsured rate and hearing
+disability and independent living disability [more explanation]. Poverty
+levels show a strong positive correlation with disability prevalence,
+particularly for Mobility Disability, Cognitive Disability, and Any
+Disability. This suggests that individuals in higher poverty brackets
+are more likely to report disabilities, potentially due to limited
+access to healthcare and preventive services, greater exposure to
+environmental and occupational risk factors, and an increased likelihood
+of chronic health conditions. Medicare and Medicaid coverage also play a
+crucial role in disability prevalence. Medicare Insurance Coverage is
+significantly associated with higher prevalence of Vision Disability,
+Independent Living Disability, Mobility Disability, Cognitive
+Disability, and Any Disability. Given that Medicare primarily serves
+individuals aged 65 and older, as well as certain disabled individuals,
+this trend aligns with expectations that older populations and those
+with disabilities are more likely to be enrolled in Medicare. Similarly,
+Medicaid Insurance Coverage exhibits a significant positive relationship
+with Cognitive Disability and Self-Care Disability, reinforcing the
+connection between lower-income populations, Medicaid utilization, and
+higher disability rates. Employer-sponsored insurance coverage, on the
+other hand, is negatively associated with several disability types,
+including Hearing Disability, Independent Living Disability, Mobility
+Disability, and Any Disability. This suggests that individuals with
+employer-sponsored insurance are less likely to report disabilities,
+potentially due to better access to healthcare services, workplace
+accommodations, and overall improved socioeconomic conditions. While
+some variables, such as the uninsured rate, exhibit sporadic
+significance, their overall effect sizes are minimal, suggesting a
+limited impact on disability prevalence. Hospital-related factors,
+including Total Hospitals, Hospital Beds, and Total Medicare Enrollees,
+display weak or mixed effects, indicating that while healthcare
+infrastructure plays a role, it may not be a primary determinant of
+disability rates. Additionally, Disability Medicaid Spending is
+statistically significant in select cases but with small coefficient
+values, suggesting it is not a major explanatory factor in disability
+prevalence. These findings carry important policy implications. Given
+the strong link between poverty and disability, expanding access to
+preventive healthcare, rehabilitation services, and disability
+accommodations could help mitigate disparities. The significant
+association between Medicaid coverage and cognitive disabilities
+suggests that policies aimed at expanding mental health services could
+be particularly beneficial. Furthermore, states with aging populations,
+such as Florida, may see higher rates of hearing and vision-related
+disabilities, necessitating age-friendly healthcare policies and
+accessibility improvements.</p>
+</div>
+<div id="clustering-results" class="section level4">
+<h4>Clustering Results</h4>
+<p>I applied HDBSCAN to identify clusters of U.S. states based on their
+poverty rate and disability prevalence. While the dataset is limited to
+51 observations, the resulting clusters reveal meaningful groupings. As
+shown in Figure 5, states were assigned to three distinct clusters. One
+cluster includes states with both high poverty and high disability
+prevalence—potentially capturing structurally disadvantaged regions such
+as Kentucky, Mississippi, and West Virginia. Another group consists of
+states with moderate poverty but relatively low disability prevalence,
+which may reflect a balance between economic conditions and healthcare
+access. A third cluster, more broadly distributed, includes many states
+with high disability prevalence despite mid-range poverty rates. This
+pattern may be driven by aging populations or regional healthcare
+differences. Overall, the clustering highlights that the relationship
+between poverty and disability is complex and varies by context,
+reinforcing the need for region-specific policy responses.</p>
+<p><img src="JSC370_Project_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+</div>
+</div>
+<div id="conclusion-and-summary" class="section level3">
+<h3>Conclusion and Summary</h3>
+<p>This study found strong associations between disability prevalence
+and socioeconomic indicators across U.S. states. Poverty, public
+insurance reliance, and lack of employer insurance were key predictors.
+Age, inferred through Medicare enrollment, also played a substantial
+role. Specifically, poverty is positively correlated with Mobility
+Disability, Cognitive Disability, and Any Disability, while Medicaid and
+Medicare coverage are also significant predictors of disability
+prevalence. On the other hand, employer-sponsored insurance is
+negatively associated with disability rates, suggesting that access to
+workplace benefits may help mitigate disability risk.</p>
+<p>Age was indirectly represented in the models through Medicare
+enrollment rates. As expected, higher Medicare coverage—often associated
+with older adults—was a strong predictor of increased disability
+prevalence. These findings confirm that both economic and demographic
+dimensions contribute meaningfully to differences in disability across
+states.</p>
+<p>Preliminary geospatial analysis shows that disability prevalence is
+higher in Southern states and lower in Western and Northeastern states.
+This aligns with socioeconomic disparities, where states with lower
+income levels and weaker healthcare infrastructure tend to experience
+higher disability rates. Additionally, correlation analysis indicates
+that higher Medicaid spending is linked to lower uninsured rates,
+reinforcing the role of public health programs in supporting individuals
+with disabilities.</p>
+<p>The clustering analysis using HDBSCAN revealed that U.S. states group
+into distinct clusters based on their disability prevalence and poverty
+rates. Despite the small sample size, the results highlighted patterns
+not captured by simple correlations—such as a cluster of states with
+disproportionately high disability despite moderate poverty levels,
+potentially driven by aging populations or healthcare access. Other
+clusters reflected more direct links between economic disadvantage and
+disability. These findings suggest that disability disparities are
+shaped by multifaceted, region-specific factors, reinforcing the value
+of tailored public health strategies.</p>
+<p>These findings can be contextualized within current healthcare
+policies and state-level economic programs. For example, several states
+with high disability prevalence and poverty—such as Kentucky and
+Mississippi—have historically limited Medicaid coverage or delayed
+expansion under the Affordable Care Act. In contrast, states like
+Massachusetts and Colorado, which fall into low-disability clusters,
+offer more comprehensive insurance coverage and disability-related
+services. These spatial and statistical associations suggest that policy
+interventions such as Medicaid expansion, improved access to mental
+health services, and support for aging populations could be particularly
+impactful in high-burden regions. Encouraging employer-sponsored
+insurance and addressing socioeconomic inequities could also help
+mitigate disability disparities in vulnerable populations.</p>
+</div>
+
+<p>Copyright &copy; 2025. Jingwen Zhong.</p>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+
+
+<title>Appendix: Full State-Level Summary Table</title>
+
+<script src="site_libs/header-attrs-2.29/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/cosmo.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="site_libs/kePrint-0.0.1/kePrint.js"></script>
+<link href="site_libs/lightable-0.0.1/lightable.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/all.min.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet" />
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">JSC370 Final Project</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="vis.html">Visualization</a>
+</li>
+<li>
+  <a href="JSC370_Project.html">Report</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="appendix.html">Appendix</a>
+</li>
+<li>
+  <a href="https://github.com/lisazhong13/JSC370-finalproject/JSC370_Project.pdf">Report (downloadable PDF version)</a>
+</li>
+<li>
+  <a href="https://github.com/lisazhong13/JSC370-finalproject">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="https://jsc370.github.io/JSC370-2025/">JSC370 Home</a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">Appendix: Full State-Level Summary
+Table</h1>
+
+</div>
+
+
+<table class="table table-striped table-hover table-condensed" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+Transposed Summary Statistics for States by Disability Prevalence in
+2021
+</caption>
+<thead>
+<tr>
+<th style="text-align:left;">
+State
+</th>
+<th style="text-align:left;">
+DisabilityPrevalence
+</th>
+<th style="text-align:left;">
+UninsuredRate
+</th>
+<th style="text-align:left;">
+PovertyTotal
+</th>
+<th style="text-align:left;">
+MilitaryInsuranceCoverage
+</th>
+<th style="text-align:left;">
+Total.Hospitals
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+maine
+</td>
+<td style="text-align:left;">
+9.950<br>[6.350–18.125]
+</td>
+<td style="text-align:left;">
+0.831<br>[0.831–0.831]
+</td>
+<td style="text-align:left;">
+0.122<br>[0.122–0.122]
+</td>
+<td style="text-align:left;">
+0.014<br>[0.014–0.014]
+</td>
+<td style="text-align:left;">
+38.000<br>[38.000–38.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+texas
+</td>
+<td style="text-align:left;">
+9.450<br>[5.750–16.100]
+</td>
+<td style="text-align:left;">
+3.199<br>[3.199–3.199]
+</td>
+<td style="text-align:left;">
+0.143<br>[0.143–0.143]
+</td>
+<td style="text-align:left;">
+0.018<br>[0.018–0.018]
+</td>
+<td style="text-align:left;">
+708.000<br>[708.000–708.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+pennsylvania
+</td>
+<td style="text-align:left;">
+9.400<br>[5.925–15.625]
+</td>
+<td style="text-align:left;">
+0.988<br>[0.988–0.988]
+</td>
+<td style="text-align:left;">
+0.121<br>[0.121–0.121]
+</td>
+<td style="text-align:left;">
+0.005<br>[0.005–0.005]
+</td>
+<td style="text-align:left;">
+216.000<br>[216.000–216.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+oregon
+</td>
+<td style="text-align:left;">
+9.350<br>[5.975–18.075]
+</td>
+<td style="text-align:left;">
+0.746<br>[0.746–0.746]
+</td>
+<td style="text-align:left;">
+0.125<br>[0.125–0.125]
+</td>
+<td style="text-align:left;">
+0.009<br>[0.009–0.009]
+</td>
+<td style="text-align:left;">
+63.000<br>[63.000–63.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+kansas
+</td>
+<td style="text-align:left;">
+9.350<br>[5.775–16.425]
+</td>
+<td style="text-align:left;">
+1.305<br>[1.305–1.305]
+</td>
+<td style="text-align:left;">
+0.120<br>[0.120–0.120]
+</td>
+<td style="text-align:left;">
+0.019<br>[0.019–0.019]
+</td>
+<td style="text-align:left;">
+148.000<br>[148.000–148.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+montana
+</td>
+<td style="text-align:left;">
+9.300<br>[5.775–16.625]
+</td>
+<td style="text-align:left;">
+1.596<br>[1.596–1.596]
+</td>
+<td style="text-align:left;">
+0.113<br>[0.113–0.113]
+</td>
+<td style="text-align:left;">
+0.025<br>[0.025–0.025]
+</td>
+<td style="text-align:left;">
+68.000<br>[68.000–68.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+idaho
+</td>
+<td style="text-align:left;">
+9.200<br>[6.475–18.125]
+</td>
+<td style="text-align:left;">
+1.868<br>[1.868–1.868]
+</td>
+<td style="text-align:left;">
+0.112<br>[0.112–0.112]
+</td>
+<td style="text-align:left;">
+0.018<br>[0.018–0.018]
+</td>
+<td style="text-align:left;">
+52.000<br>[52.000–52.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+north dakota
+</td>
+<td style="text-align:left;">
+9.150<br>[4.925–14.875]
+</td>
+<td style="text-align:left;">
+1.889<br>[1.889–1.889]
+</td>
+<td style="text-align:left;">
+0.098<br>[0.098–0.098]
+</td>
+<td style="text-align:left;">
+0.027<br>[0.027–0.027]
+</td>
+<td style="text-align:left;">
+49.000<br>[49.000–49.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+arizona
+</td>
+<td style="text-align:left;">
+9.100<br>[6.050–16.725]
+</td>
+<td style="text-align:left;">
+2.034<br>[2.034–2.034]
+</td>
+<td style="text-align:left;">
+0.129<br>[0.129–0.129]
+</td>
+<td style="text-align:left;">
+0.015<br>[0.015–0.015]
+</td>
+<td style="text-align:left;">
+126.000<br>[126.000–126.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+new york
+</td>
+<td style="text-align:left;">
+8.900<br>[4.900–15.275]
+</td>
+<td style="text-align:left;">
+0.589<br>[0.589–0.589]
+</td>
+<td style="text-align:left;">
+0.139<br>[0.139–0.139]
+</td>
+<td style="text-align:left;">
+0.004<br>[0.004–0.004]
+</td>
+<td style="text-align:left;">
+191.000<br>[191.000–191.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+alaska
+</td>
+<td style="text-align:left;">
+8.850<br>[5.900–15.625]
+</td>
+<td style="text-align:left;">
+2.093<br>[2.093–2.093]
+</td>
+<td style="text-align:left;">
+0.110<br>[0.110–0.110]
+</td>
+<td style="text-align:left;">
+0.053<br>[0.053–0.053]
+</td>
+<td style="text-align:left;">
+24.000<br>[24.000–24.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+california
+</td>
+<td style="text-align:left;">
+8.800<br>[5.325–15.350]
+</td>
+<td style="text-align:left;">
+0.830<br>[0.830–0.830]
+</td>
+<td style="text-align:left;">
+0.123<br>[0.123–0.123]
+</td>
+<td style="text-align:left;">
+0.008<br>[0.008–0.008]
+</td>
+<td style="text-align:left;">
+470.000<br>[470.000–470.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+delaware
+</td>
+<td style="text-align:left;">
+8.800<br>[4.500–15.250]
+</td>
+<td style="text-align:left;">
+0.835<br>[0.835–0.835]
+</td>
+<td style="text-align:left;">
+0.112<br>[0.112–0.112]
+</td>
+<td style="text-align:left;">
+0.012<br>[0.012–0.012]
+</td>
+<td style="text-align:left;">
+15.000<br>[15.000–15.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+virginia
+</td>
+<td style="text-align:left;">
+8.800<br>[4.450–14.875]
+</td>
+<td style="text-align:left;">
+1.048<br>[1.048–1.048]
+</td>
+<td style="text-align:left;">
+0.103<br>[0.103–0.103]
+</td>
+<td style="text-align:left;">
+0.041<br>[0.041–0.041]
+</td>
+<td style="text-align:left;">
+105.000<br>[105.000–105.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+wyoming
+</td>
+<td style="text-align:left;">
+8.750<br>[5.850–15.850]
+</td>
+<td style="text-align:left;">
+2.790<br>[2.790–2.790]
+</td>
+<td style="text-align:left;">
+0.114<br>[0.114–0.114]
+</td>
+<td style="text-align:left;">
+0.021<br>[0.021–0.021]
+</td>
+<td style="text-align:left;">
+30.000<br>[30.000–30.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+new hampshire
+</td>
+<td style="text-align:left;">
+8.500<br>[5.200–15.950]
+</td>
+<td style="text-align:left;">
+0.788<br>[0.788–0.788]
+</td>
+<td style="text-align:left;">
+0.070<br>[0.070–0.070]
+</td>
+<td style="text-align:left;">
+0.012<br>[0.012–0.012]
+</td>
+<td style="text-align:left;">
+30.000<br>[30.000–30.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+wisconsin
+</td>
+<td style="text-align:left;">
+8.350<br>[4.600–13.900]
+</td>
+<td style="text-align:left;">
+0.934<br>[0.934–0.934]
+</td>
+<td style="text-align:left;">
+0.109<br>[0.109–0.109]
+</td>
+<td style="text-align:left;">
+0.008<br>[0.008–0.008]
+</td>
+<td style="text-align:left;">
+147.000<br>[147.000–147.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nebraska
+</td>
+<td style="text-align:left;">
+8.250<br>[4.975–13.675]
+</td>
+<td style="text-align:left;">
+1.238<br>[1.238–1.238]
+</td>
+<td style="text-align:left;">
+0.102<br>[0.102–0.102]
+</td>
+<td style="text-align:left;">
+0.018<br>[0.018–0.018]
+</td>
+<td style="text-align:left;">
+98.000<br>[98.000–98.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+district of columbia
+</td>
+<td style="text-align:left;">
+8.200<br>[4.925–13.900]
+</td>
+<td style="text-align:left;">
+0.745<br>[0.745–0.745]
+</td>
+<td style="text-align:left;">
+0.165<br>[0.165–0.165]
+</td>
+<td style="text-align:left;">
+0.012<br>[0.012–0.012]
+</td>
+<td style="text-align:left;">
+12.000<br>[12.000–12.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+washington
+</td>
+<td style="text-align:left;">
+8.150<br>[5.075–15.325]
+</td>
+<td style="text-align:left;">
+0.717<br>[0.717–0.717]
+</td>
+<td style="text-align:left;">
+0.102<br>[0.102–0.102]
+</td>
+<td style="text-align:left;">
+0.019<br>[0.019–0.019]
+</td>
+<td style="text-align:left;">
+107.000<br>[107.000–107.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+new jersey
+</td>
+<td style="text-align:left;">
+8.100<br>[4.800–13.450]
+</td>
+<td style="text-align:left;">
+0.827<br>[0.827–0.827]
+</td>
+<td style="text-align:left;">
+0.103<br>[0.103–0.103]
+</td>
+<td style="text-align:left;">
+0.004<br>[0.004–0.004]
+</td>
+<td style="text-align:left;">
+95.000<br>[95.000–95.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+rhode island
+</td>
+<td style="text-align:left;">
+8.050<br>[5.275–15.725]
+</td>
+<td style="text-align:left;">
+0.527<br>[0.527–0.527]
+</td>
+<td style="text-align:left;">
+0.115<br>[0.115–0.115]
+</td>
+<td style="text-align:left;">
+0.005<br>[0.005–0.005]
+</td>
+<td style="text-align:left;">
+14.000<br>[14.000–14.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+south dakota
+</td>
+<td style="text-align:left;">
+8.050<br>[5.025–14.500]
+</td>
+<td style="text-align:left;">
+1.998<br>[1.998–1.998]
+</td>
+<td style="text-align:left;">
+0.125<br>[0.125–0.125]
+</td>
+<td style="text-align:left;">
+0.027<br>[0.027–0.027]
+</td>
+<td style="text-align:left;">
+61.000<br>[61.000–61.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+utah
+</td>
+<td style="text-align:left;">
+7.850<br>[5.000–15.900]
+</td>
+<td style="text-align:left;">
+2.388<br>[2.388–2.388]
+</td>
+<td style="text-align:left;">
+0.082<br>[0.082–0.082]
+</td>
+<td style="text-align:left;">
+0.013<br>[0.013–0.013]
+</td>
+<td style="text-align:left;">
+57.000<br>[57.000–57.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+connecticut
+</td>
+<td style="text-align:left;">
+7.700<br>[5.350–14.150]
+</td>
+<td style="text-align:left;">
+0.523<br>[0.523–0.523]
+</td>
+<td style="text-align:left;">
+0.101<br>[0.101–0.101]
+</td>
+<td style="text-align:left;">
+0.007<br>[0.007–0.007]
+</td>
+<td style="text-align:left;">
+39.000<br>[39.000–39.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+massachusetts
+</td>
+<td style="text-align:left;">
+7.700<br>[4.700–14.650]
+</td>
+<td style="text-align:left;">
+0.267<br>[0.267–0.267]
+</td>
+<td style="text-align:left;">
+0.104<br>[0.104–0.104]
+</td>
+<td style="text-align:left;">
+0.004<br>[0.004–0.004]
+</td>
+<td style="text-align:left;">
+99.000<br>[99.000–99.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+colorado
+</td>
+<td style="text-align:left;">
+7.300<br>[4.625–14.100]
+</td>
+<td style="text-align:left;">
+1.069<br>[1.069–1.069]
+</td>
+<td style="text-align:left;">
+0.099<br>[0.099–0.099]
+</td>
+<td style="text-align:left;">
+0.022<br>[0.022–0.022]
+</td>
+<td style="text-align:left;">
+107.000<br>[107.000–107.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+maryland
+</td>
+<td style="text-align:left;">
+7.300<br>[4.400–13.125]
+</td>
+<td style="text-align:left;">
+1.030<br>[1.030–1.030]
+</td>
+<td style="text-align:left;">
+0.102<br>[0.102–0.102]
+</td>
+<td style="text-align:left;">
+0.019<br>[0.019–0.019]
+</td>
+<td style="text-align:left;">
+59.000<br>[59.000–59.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+minnesota
+</td>
+<td style="text-align:left;">
+7.250<br>[4.525–13.625]
+</td>
+<td style="text-align:left;">
+0.776<br>[0.776–0.776]
+</td>
+<td style="text-align:left;">
+0.089<br>[0.089–0.089]
+</td>
+<td style="text-align:left;">
+0.006<br>[0.006–0.006]
+</td>
+<td style="text-align:left;">
+140.000<br>[140.000–140.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+iowa
+</td>
+<td style="text-align:left;">
+7.150<br>[4.875–13.750]
+</td>
+<td style="text-align:left;">
+0.832<br>[0.832–0.832]
+</td>
+<td style="text-align:left;">
+0.111<br>[0.111–0.111]
+</td>
+<td style="text-align:left;">
+0.008<br>[0.008–0.008]
+</td>
+<td style="text-align:left;">
+123.000<br>[123.000–123.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+hawaii
+</td>
+<td style="text-align:left;">
+7.000<br>[4.300–11.375]
+</td>
+<td style="text-align:left;">
+0.648<br>[0.648–0.648]
+</td>
+<td style="text-align:left;">
+0.113<br>[0.113–0.113]
+</td>
+<td style="text-align:left;">
+0.044<br>[0.044–0.044]
+</td>
+<td style="text-align:left;">
+26.000<br>[26.000–26.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+kentucky
+</td>
+<td style="text-align:left;">
+14.200<br>[9.425–22.825]
+</td>
+<td style="text-align:left;">
+0.964<br>[0.964–0.964]
+</td>
+<td style="text-align:left;">
+0.165<br>[0.165–0.165]
+</td>
+<td style="text-align:left;">
+0.012<br>[0.012–0.012]
+</td>
+<td style="text-align:left;">
+114.000<br>[114.000–114.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+arkansas
+</td>
+<td style="text-align:left;">
+12.900<br>[7.525–21.950]
+</td>
+<td style="text-align:left;">
+1.443<br>[1.443–1.443]
+</td>
+<td style="text-align:left;">
+0.164<br>[0.164–0.164]
+</td>
+<td style="text-align:left;">
+0.015<br>[0.015–0.015]
+</td>
+<td style="text-align:left;">
+109.000<br>[109.000–109.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+louisiana
+</td>
+<td style="text-align:left;">
+12.550<br>[7.100–21.450]
+</td>
+<td style="text-align:left;">
+1.006<br>[1.006–1.006]
+</td>
+<td style="text-align:left;">
+0.196<br>[0.196–0.196]
+</td>
+<td style="text-align:left;">
+0.015<br>[0.015–0.015]
+</td>
+<td style="text-align:left;">
+209.000<br>[209.000–209.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+alabama
+</td>
+<td style="text-align:left;">
+12.300<br>[5.675–20.825]
+</td>
+<td style="text-align:left;">
+0.953<br>[0.953–0.953]
+</td>
+<td style="text-align:left;">
+0.160<br>[0.160–0.160]
+</td>
+<td style="text-align:left;">
+0.021<br>[0.021–0.021]
+</td>
+<td style="text-align:left;">
+115.000<br>[115.000–115.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+oklahoma
+</td>
+<td style="text-align:left;">
+12.050<br>[7.875–20.600]
+</td>
+<td style="text-align:left;">
+1.928<br>[1.928–1.928]
+</td>
+<td style="text-align:left;">
+0.155<br>[0.155–0.155]
+</td>
+<td style="text-align:left;">
+0.023<br>[0.023–0.023]
+</td>
+<td style="text-align:left;">
+147.000<br>[147.000–147.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+tennessee
+</td>
+<td style="text-align:left;">
+12.000<br>[7.000–20.050]
+</td>
+<td style="text-align:left;">
+1.166<br>[1.166–1.166]
+</td>
+<td style="text-align:left;">
+0.137<br>[0.137–0.137]
+</td>
+<td style="text-align:left;">
+0.017<br>[0.017–0.017]
+</td>
+<td style="text-align:left;">
+136.000<br>[136.000–136.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+nevada
+</td>
+<td style="text-align:left;">
+11.050<br>[6.675–17.900]
+</td>
+<td style="text-align:left;">
+2.036<br>[2.036–2.036]
+</td>
+<td style="text-align:left;">
+0.141<br>[0.141–0.141]
+</td>
+<td style="text-align:left;">
+0.015<br>[0.015–0.015]
+</td>
+<td style="text-align:left;">
+57.000<br>[57.000–57.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+missouri
+</td>
+<td style="text-align:left;">
+10.950<br>[6.600–18.500]
+</td>
+<td style="text-align:left;">
+1.412<br>[1.412–1.412]
+</td>
+<td style="text-align:left;">
+0.127<br>[0.127–0.127]
+</td>
+<td style="text-align:left;">
+0.013<br>[0.013–0.013]
+</td>
+<td style="text-align:left;">
+136.000<br>[136.000–136.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+new mexico
+</td>
+<td style="text-align:left;">
+10.900<br>[7.075–18.550]
+</td>
+<td style="text-align:left;">
+1.546<br>[1.546–1.546]
+</td>
+<td style="text-align:left;">
+0.187<br>[0.187–0.187]
+</td>
+<td style="text-align:left;">
+0.016<br>[0.016–0.016]
+</td>
+<td style="text-align:left;">
+54.000<br>[54.000–54.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+south carolina
+</td>
+<td style="text-align:left;">
+10.750<br>[6.225–17.400]
+</td>
+<td style="text-align:left;">
+1.239<br>[1.239–1.239]
+</td>
+<td style="text-align:left;">
+0.149<br>[0.149–0.149]
+</td>
+<td style="text-align:left;">
+0.022<br>[0.022–0.022]
+</td>
+<td style="text-align:left;">
+86.000<br>[86.000–86.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+north carolina
+</td>
+<td style="text-align:left;">
+10.650<br>[6.300–16.975]
+</td>
+<td style="text-align:left;">
+1.302<br>[1.302–1.302]
+</td>
+<td style="text-align:left;">
+0.137<br>[0.137–0.137]
+</td>
+<td style="text-align:left;">
+0.025<br>[0.025–0.025]
+</td>
+<td style="text-align:left;">
+127.000<br>[127.000–127.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+ohio
+</td>
+<td style="text-align:left;">
+10.550<br>[5.375–17.475]
+</td>
+<td style="text-align:left;">
+1.202<br>[1.202–1.202]
+</td>
+<td style="text-align:left;">
+0.133<br>[0.133–0.133]
+</td>
+<td style="text-align:left;">
+0.008<br>[0.008–0.008]
+</td>
+<td style="text-align:left;">
+231.000<br>[231.000–231.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+indiana
+</td>
+<td style="text-align:left;">
+10.450<br>[5.425–17.400]
+</td>
+<td style="text-align:left;">
+1.493<br>[1.493–1.493]
+</td>
+<td style="text-align:left;">
+0.121<br>[0.121–0.121]
+</td>
+<td style="text-align:left;">
+0.009<br>[0.009–0.009]
+</td>
+<td style="text-align:left;">
+168.000<br>[168.000–168.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+illinois
+</td>
+<td style="text-align:left;">
+10.400<br>[6.600–17.375]
+</td>
+<td style="text-align:left;">
+0.762<br>[0.762–0.762]
+</td>
+<td style="text-align:left;">
+0.120<br>[0.120–0.120]
+</td>
+<td style="text-align:left;">
+0.007<br>[0.007–0.007]
+</td>
+<td style="text-align:left;">
+202.000<br>[202.000–202.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+georgia
+</td>
+<td style="text-align:left;">
+10.350<br>[5.475–17.975]
+</td>
+<td style="text-align:left;">
+1.661<br>[1.661–1.661]
+</td>
+<td style="text-align:left;">
+0.141<br>[0.141–0.141]
+</td>
+<td style="text-align:left;">
+0.022<br>[0.022–0.022]
+</td>
+<td style="text-align:left;">
+173.000<br>[173.000–173.000]
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+michigan
+</td>
+<td style="text-align:left;">
+10.050<br>[5.425–16.400]
+</td>
+<td style="text-align:left;">
+0.697<br>[0.697–0.697]
+</td>
+<td style="text-align:left;">
+0.133<br>[0.133–0.133]
+</td>
+<td style="text-align:left;">
+0.005<br>[0.005–0.005]
+</td>
+<td style="text-align:left;">
+158.000<br>[158.000–158.000]
+</td>
+</tr>
+</tbody>
+</table>
+
+<p>Copyright &copy; 2025. Jingwen Zhong.</p>
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
