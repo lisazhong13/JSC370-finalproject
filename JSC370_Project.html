@@ -263,7 +263,7 @@ $(document).ready(function () {
   <a href="appendix.html">Appendix</a>
 </li>
 <li>
-  <a href="https://github.com/lisazhong13/JSC370-finalproject/JSC370_Project.pdf">Report (downloadable PDF version)</a>
+  <a href="https://github.com/lisazhong13/JSC370-finalproject/blob/main/JSC370_Project.pdf">Report (downloadable PDF version)</a>
 </li>
 <li>
   <a href="https://github.com/lisazhong13/JSC370-finalproject">
@@ -295,8 +295,8 @@ across U.S. states?</h1>
 href="https://github.com/lisazhong13/JSC370-finalproject"
 class="uri">https://github.com/lisazhong13/JSC370-finalproject</a></p>
 <p>downloadable report link: <a
-href="https://github.com/lisazhong13/JSC370-finalproject/JSC370-Project.pdf"
-class="uri">https://github.com/lisazhong13/JSC370-finalproject/JSC370-Project.pdf</a></p>
+href="https://github.com/lisazhong13/JSC370-finalproject/blob/main/JSC370_Project.pdf"
+class="uri">https://github.com/lisazhong13/JSC370-finalproject/blob/main/JSC370_Project.pdf</a></p>
 <div id="introduction" class="section level3">
 <h3>Introduction</h3>
 <p>Disabilities affect millions of individuals across the United States,
@@ -355,15 +355,12 @@ U.S. Census Bureau API. Furthermore, I downloaded various datasets from
 the Kaiser Family Foundation (KFF) website, including information on the
 poverty rate by age, healthcare access indicators such as health
 insurance coverage, hospital counts, Medicaid spending, and additional
-disability-related data. For this analysis, poverty is defined as the
-proportion of individuals living below the federal poverty line within
-each state. This is calculated as the percentage of individuals whose
-income falls below a specified threshold set by the federal government,
-adjusted annually for inflation. This metric provides insight into the
-economic conditions in each state and is used as a key indicator for
-analyzing socioeconomic disparities and their relationship with
-disability prevalence. Since Medicare is available primarily to
-individuals aged 65+, the variables
+disability-related data. In this study, both poverty and disability
+variables are expressed as proportions of the population at the state
+level. For instance, a value of 0.12 for
+<code>DisabilityPrevalence</code> indicates that 12% of the state’s
+population reported having a disability. Since Medicare is available
+primarily to individuals aged 65+, the variables
 <code>MedicareInsuranceCoverage</code> and
 <code>TotalMedicareEnrollees</code> serve as proxies for age structure
 across states.</p>
@@ -415,80 +412,107 @@ numeric features and excluding records with missing values.</p>
 <h3>Results</h3>
 <div id="summary-statistics" class="section level4">
 <h4>Summary Statistics</h4>
-<p>A summary of the top 10 states with the highest disability prevalence
+<p>A summary of the top 3 states with the highest disability prevalence
 is shown below (Table 1), including medians and interquartile ranges for
 key variables:</p>
-<table style="width:100%;">
-<caption>Table 1: Median [IQR] Summary Statistics for Top 5 States by
-Disability Prevalence in 2021</caption>
-<colgroup>
-<col width="6%" />
-<col width="13%" />
-<col width="22%" />
-<col width="12%" />
-<col width="12%" />
-<col width="16%" />
-<col width="16%" />
-</colgroup>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<caption>
+Transposed Summary Statistics for Top 3 States by Disability Prevalence
+in 2021
+</caption>
 <thead>
-<tr class="header">
-<th align="left">State</th>
-<th align="left">DisabilityPrevalence</th>
-<th align="left">DisabilityPopulation</th>
-<th align="left">UninsuredRate</th>
-<th align="left">PovertyTotal</th>
-<th align="left">MilitaryInsuranceCoverage</th>
-<th align="left">Total.Hospitals</th>
+<tr>
+<th style="text-align:left;">
+Variable
+</th>
+<th style="text-align:left;">
+kentucky
+</th>
+<th style="text-align:left;">
+arkansas
+</th>
+<th style="text-align:left;">
+louisiana
+</th>
 </tr>
 </thead>
 <tbody>
-<tr class="odd">
-<td align="left">kentucky</td>
-<td align="left">14.200 [9.425–22.825]</td>
-<td align="left">501267.500 [354497.750–854452.750]</td>
-<td align="left">0.964 [0.964–0.964]</td>
-<td align="left">0.165 [0.165–0.165]</td>
-<td align="left">0.012 [0.012–0.012]</td>
-<td align="left">114.000 [114.000–114.000]</td>
+<tr>
+<td style="text-align:left;">
+DisabilityPrevalence
+</td>
+<td style="text-align:left;">
+14.200<br>[9.425–22.825]
+</td>
+<td style="text-align:left;">
+12.900<br>[7.525–21.950]
+</td>
+<td style="text-align:left;">
+12.550<br>[7.100–21.450]
+</td>
 </tr>
-<tr class="even">
-<td align="left">arkansas</td>
-<td align="left">12.900 [7.525–21.950]</td>
-<td align="left">301037.000 [186469.500–500431.250]</td>
-<td align="left">1.443 [1.443–1.443]</td>
-<td align="left">0.164 [0.164–0.164]</td>
-<td align="left">0.015 [0.015–0.015]</td>
-<td align="left">109.000 [109.000–109.000]</td>
+<tr>
+<td style="text-align:left;">
+UninsuredRate
+</td>
+<td style="text-align:left;">
+0.964<br>[0.964–0.964]
+</td>
+<td style="text-align:left;">
+1.443<br>[1.443–1.443]
+</td>
+<td style="text-align:left;">
+1.006<br>[1.006–1.006]
+</td>
 </tr>
-<tr class="odd">
-<td align="left">louisiana</td>
-<td align="left">12.550 [7.100–21.450]</td>
-<td align="left">436514.000 [253025.250–740477.000]</td>
-<td align="left">1.006 [1.006–1.006]</td>
-<td align="left">0.196 [0.196–0.196]</td>
-<td align="left">0.015 [0.015–0.015]</td>
-<td align="left">209.000 [209.000–209.000]</td>
+<tr>
+<td style="text-align:left;">
+PovertyTotal
+</td>
+<td style="text-align:left;">
+0.165<br>[0.165–0.165]
+</td>
+<td style="text-align:left;">
+0.164<br>[0.164–0.164]
+</td>
+<td style="text-align:left;">
+0.196<br>[0.196–0.196]
+</td>
 </tr>
-<tr class="even">
-<td align="left">alabama</td>
-<td align="left">12.300 [5.675–20.825]</td>
-<td align="left">470071.000 [249220.250–879040.000]</td>
-<td align="left">0.953 [0.953–0.953]</td>
-<td align="left">0.160 [0.160–0.160]</td>
-<td align="left">0.021 [0.021–0.021]</td>
-<td align="left">115.000 [115.000–115.000]</td>
+<tr>
+<td style="text-align:left;">
+MilitaryInsuranceCoverage
+</td>
+<td style="text-align:left;">
+0.012<br>[0.012–0.012]
+</td>
+<td style="text-align:left;">
+0.015<br>[0.015–0.015]
+</td>
+<td style="text-align:left;">
+0.015<br>[0.015–0.015]
+</td>
 </tr>
-<tr class="odd">
-<td align="left">oklahoma</td>
-<td align="left">12.050 [7.875–20.600]</td>
-<td align="left">359280.000 [235176.500–634578.000]</td>
-<td align="left">1.928 [1.928–1.928]</td>
-<td align="left">0.155 [0.155–0.155]</td>
-<td align="left">0.023 [0.023–0.023]</td>
-<td align="left">147.000 [147.000–147.000]</td>
+<tr>
+<td style="text-align:left;">
+Total.Hospitals
+</td>
+<td style="text-align:left;">
+114.000<br>[114.000–114.000]
+</td>
+<td style="text-align:left;">
+109.000<br>[109.000–109.000]
+</td>
+<td style="text-align:left;">
+209.000<br>[209.000–209.000]
+</td>
 </tr>
 </tbody>
 </table>
+<p>For a full table of summary of median and IQR of selected variables
+in all states, please check out the appendix (<a
+href="https://lisazhong13.github.io/JSC370-finalproject/appendix.html"
+class="uri">https://lisazhong13.github.io/JSC370-finalproject/appendix.html</a>)</p>
 </div>
 <div id="disability-type-distribution" class="section level4">
 <h4>Disability Type Distribution</h4>
@@ -534,8 +558,18 @@ Colorado, and in some parts of the Northeast. Alaska appears to have
 relatively higher disability prevalence compared to many other states.
 Disability prevalence is often correlated with poverty levels,
 healthcare access, and demographics.</p>
+<p><img src="JSC370_Project_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p>The map (Figure 4) displays the poverty rate distribution across U.S.
+states. Darker purple shades indicate higher poverty rates. Similar to
+the disability distribution, the South and parts of the West exhibit
+elevated poverty levels. These areas generally correspond to the regions
+with high disability prevalence shown in Figure 3. This spatial overlap
+suggests that poverty and disability may be interconnected, potentially
+due to limited healthcare access, reduced economic opportunities, and
+greater exposure to health risks in lower-income regions. States with
+lower poverty rates, such as those in the Northeast and Mountain West,
+tend to report lower disability prevalence.</p>
 <p><img src="JSC370_Project_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
-<p><img src="JSC370_Project_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 <p>Comparing with the total poverty percentage per state, I observe
 similar density distribution across the country. This can be explained
 that higher poverty rates leads to lower healthcare access, which could
@@ -545,8 +579,21 @@ rates.</p>
 </div>
 <div id="anova-results" class="section level4">
 <h4>ANOVA Results</h4>
+<p>To further investigate whether these observed geographic variations
+in disability prevalence are statistically significant, I conducted an
+ANOVA (Analysis of Variance) test. From Table 2, the ANOVA results
+showed p-values are all &lt; 2e-16 (very close to 0). This means there
+is a strong statistical evidence that disability proportions
+significantly differ across states. Since p &lt; 0.05, I reject the null
+hypothesis and conclude that disability proportions differ meaningfully
+across states beyond what could be attributed to random variation. By
+analyzing different disability types (e.g., mobility, cognitive,
+self-care), I can assess which forms of disability exhibit the most
+substantial regional disparities and how these differences align with
+socioeconomic patterns. The following table presents the ANOVA results,
+highlighting statistically significant variations across states.</p>
 <table>
-<caption>Table 2: ANOVA Results for Disability Proportions Across
+<caption>ANOVA Results for Disability Proportions Across
 States</caption>
 <colgroup>
 <col width="40%" />
@@ -625,19 +672,6 @@ States</caption>
 </tr>
 </tbody>
 </table>
-<p>To further investigate whether these observed geographic variations
-in disability prevalence are statistically significant, I conducted an
-ANOVA (Analysis of Variance) test. From Table 2, the ANOVA results
-showed p-values are all &lt; 2e-16 (very close to 0). This means there
-is a strong statistical evidence that disability proportions
-significantly differ across states. Since p &lt; 0.05, I reject the null
-hypothesis and conclude that disability proportions differ meaningfully
-across states beyond what could be attributed to random variation. By
-analyzing different disability types (e.g., mobility, cognitive,
-self-care), I can assess which forms of disability exhibit the most
-substantial regional disparities and how these differences align with
-socioeconomic patterns. The following table presents the ANOVA results,
-highlighting statistically significant variations across states.</p>
 </div>
 <div id="regression-results" class="section level4">
 <h4>Regression Results</h4>
@@ -939,39 +973,36 @@ DisabilityMedicaidSpending
 </tr>
 </tbody>
 </table>
-<p>Table 2 highlight significant associations between various
+<p>Table 3 highlight significant associations between various
 socioeconomic factors and disability prevalence across different
-disability types. Statistically significant coefficients (denoted by *)
-identified the meaningful correlations betweeen predictors and
-disabilities, with significant 0s meaning no statistically significant
-correlation is found between the predictor and outcome, for example, the
-result showed no relationship between uninsured rate and hearing
-disability and independent living disability [more explanation]. Poverty
-levels show a strong positive correlation with disability prevalence,
-particularly for Mobility Disability, Cognitive Disability, and Any
-Disability. This suggests that individuals in higher poverty brackets
-are more likely to report disabilities, potentially due to limited
-access to healthcare and preventive services, greater exposure to
-environmental and occupational risk factors, and an increased likelihood
-of chronic health conditions. Medicare and Medicaid coverage also play a
-crucial role in disability prevalence. Medicare Insurance Coverage is
-significantly associated with higher prevalence of Vision Disability,
-Independent Living Disability, Mobility Disability, Cognitive
-Disability, and Any Disability. Given that Medicare primarily serves
-individuals aged 65 and older, as well as certain disabled individuals,
-this trend aligns with expectations that older populations and those
-with disabilities are more likely to be enrolled in Medicare. Similarly,
-Medicaid Insurance Coverage exhibits a significant positive relationship
-with Cognitive Disability and Self-Care Disability, reinforcing the
-connection between lower-income populations, Medicaid utilization, and
-higher disability rates. Employer-sponsored insurance coverage, on the
-other hand, is negatively associated with several disability types,
-including Hearing Disability, Independent Living Disability, Mobility
-Disability, and Any Disability. This suggests that individuals with
-employer-sponsored insurance are less likely to report disabilities,
-potentially due to better access to healthcare services, workplace
-accommodations, and overall improved socioeconomic conditions. While
-some variables, such as the uninsured rate, exhibit sporadic
+disability types. Values listed as 0.00 indicate very small estimated
+coefficients (rounded to two decimals). Although the effect size is
+minimal, statistical significance arises due to consistent associations
+across states. Poverty levels show a strong positive correlation with
+disability prevalence, particularly for Mobility Disability, Cognitive
+Disability, and Any Disability. This suggests that individuals in higher
+poverty brackets are more likely to report disabilities, potentially due
+to limited access to healthcare and preventive services, greater
+exposure to environmental and occupational risk factors, and an
+increased likelihood of chronic health conditions. Medicare and Medicaid
+coverage also play a crucial role in disability prevalence. Medicare
+Insurance Coverage is significantly associated with higher prevalence of
+Vision Disability, Independent Living Disability, Mobility Disability,
+Cognitive Disability, and Any Disability. Given that Medicare primarily
+serves individuals aged 65 and older, as well as certain disabled
+individuals, this trend aligns with expectations that older populations
+and those with disabilities are more likely to be enrolled in Medicare.
+Similarly, Medicaid Insurance Coverage exhibits a significant positive
+relationship with Cognitive Disability and Self-Care Disability,
+reinforcing the connection between lower-income populations, Medicaid
+utilization, and higher disability rates. Employer-sponsored insurance
+coverage, on the other hand, is negatively associated with several
+disability types, including Hearing Disability, Independent Living
+Disability, Mobility Disability, and Any Disability. This suggests that
+individuals with employer-sponsored insurance are less likely to report
+disabilities, potentially due to better access to healthcare services,
+workplace accommodations, and overall improved socioeconomic conditions.
+While some variables, such as the uninsured rate, exhibit sporadic
 significance, their overall effect sizes are minimal, suggesting a
 limited impact on disability prevalence. Hospital-related factors,
 including Total Hospitals, Hospital Beds, and Total Medicare Enrollees,
@@ -993,7 +1024,10 @@ accessibility improvements.</p>
 </div>
 <div id="clustering-results" class="section level4">
 <h4>Clustering Results</h4>
-<p>I applied HDBSCAN to identify clusters of U.S. states based on their
+<p>Although the sample size is small for clustering (n = 51), HDBSCAN
+was chosen due to its robustness to noise and ability to detect
+variable-density clusters. The results should be interpreted as
+exploratory. HDBSCAN identified clusters of U.S. states based on their
 poverty rate and disability prevalence. While the dataset is limited to
 51 observations, the resulting clusters reveal meaningful groupings. As
 shown in Figure 5, states were assigned to three distinct clusters. One
@@ -1008,7 +1042,7 @@ pattern may be driven by aging populations or regional healthcare
 differences. Overall, the clustering highlights that the relationship
 between poverty and disability is complex and varies by context,
 reinforcing the need for region-specific policy responses.</p>
-<p><img src="JSC370_Project_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="JSC370_Project_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 </div>
 </div>
 <div id="conclusion-and-summary" class="section level3">

@@ -310,7 +310,6 @@ top_states <- df_final %>%
   slice_head(n = 3) %>%
   pull(State)
 
-# Filter summary table to only top 10 states
 summary_top3 <- df_final %>%
   filter(State %in% top_states) %>%
   select(DisabilityPrevalence, UninsuredRate, PovertyTotal, 
@@ -327,26 +326,23 @@ summary_top3 <- df_final %>%
   )) %>%
   arrange(desc(`DisabilityPrevalence`))
 
-summary_top3_linebreak <- summary_top3 %>%
-  mutate(across(-State, ~ gsub(" \\[", " \\\\ [", .x))) %>%  # insert actual LaTeX linebreak
-  mutate(across(-State, ~ paste0("\\makecell[l]{", .x, "}")))  # [l] = left-align
+# Remove LaTeX-specific formatting
+summary_top3_linebreak_html <- summary_top3 %>%
+  mutate(across(-State, ~ gsub(" \\[", "<br>[", .x)))  # Add HTML <br> line breaks
 
 # Transpose
-transposed_table <- summary_top3_linebreak %>%
+transposed_table_html <- summary_top3_linebreak_html %>%
   column_to_rownames("State") %>%
   t() %>%
   as.data.frame() %>%
   rownames_to_column("Variable")
 
-# Format using kable
-kable(transposed_table,
-      format = "latex",
+# Display in HTML
+kable(transposed_table_html,
+      format = "html",
       caption = "Transposed Summary Statistics for Top 3 States by Disability Prevalence in 2021",
-      booktabs = TRUE,
-      longtable = TRUE,
       escape = FALSE) %>%
-  kable_styling(latex_options = c("striped", "repeat_header"), font_size = 9)
-
+  kable_styling(full_width = FALSE, bootstrap_options = c("striped", "hover", "condensed", "responsive"))
 ```
 For a full table of summary of median and IQR of selected variables in all states, please check out the appendix (https://lisazhong13.github.io/JSC370-finalproject/appendix.html)
 
@@ -434,6 +430,8 @@ ggplot(map_data) +
   )
 ```
 
+The map (Figure 4) displays the poverty rate distribution across U.S. states. Darker purple shades indicate higher poverty rates. Similar to the disability distribution, the South and parts of the West exhibit elevated poverty levels. These areas generally correspond to the regions with high disability prevalence shown in Figure 3. This spatial overlap suggests that poverty and disability may be interconnected, potentially due to limited healthcare access, reduced economic opportunities, and greater exposure to health risks in lower-income regions. States with lower poverty rates, such as those in the Northeast and Mountain West, tend to report lower disability prevalence.
+
 ```{r echo=FALSE}
 # Convert PovertyTotal to numeric if needed
 map_data$PovertyTotal <- as.numeric(map_data$PovertyTotal)
@@ -459,6 +457,8 @@ Comparing with the total poverty percentage per state, I observe similar density
 
 #### ANOVA Results
 
+
+To further investigate whether these observed geographic variations in disability prevalence are statistically significant, I conducted an ANOVA (Analysis of Variance) test. From Table 2, the ANOVA results showed p-values are all < 2e-16 (very close to 0). This means there is a strong statistical evidence that disability proportions significantly differ across states. Since p < 0.05, I reject the null hypothesis and conclude that disability proportions differ meaningfully across states beyond what could be attributed to random variation. By analyzing different disability types (e.g., mobility, cognitive, self-care), I can assess which forms of disability exhibit the most substantial regional disparities and how these differences align with socioeconomic patterns. The following table presents the ANOVA results, highlighting statistically significant variations across states.
 
 ```{r echo=FALSE}
 # Define disability types
@@ -506,8 +506,6 @@ anova_summary_table <- anova_summary_table %>%
 # Optional: for R Markdown PDF output
 knitr::kable(anova_summary_table, caption = "ANOVA Results for Disability Proportions Across States")
 ```
-
-To further investigate whether these observed geographic variations in disability prevalence are statistically significant, I conducted an ANOVA (Analysis of Variance) test. From Table 2, the ANOVA results showed p-values are all < 2e-16 (very close to 0). This means there is a strong statistical evidence that disability proportions significantly differ across states. Since p < 0.05, I reject the null hypothesis and conclude that disability proportions differ meaningfully across states beyond what could be attributed to random variation. By analyzing different disability types (e.g., mobility, cognitive, self-care), I can assess which forms of disability exhibit the most substantial regional disparities and how these differences align with socioeconomic patterns. The following table presents the ANOVA results, highlighting statistically significant variations across states.
 
 #### Regression Results
 
