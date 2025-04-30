@@ -1,4 +1,5 @@
 # JSC370 Final Project
+## Important note: I found my GitHub cannot open the pdf and this maybe because the file is large, if you are facing the same issue, please download the file (this may take few minutes) to view the pdf, thanks for understanding!
 
 ## Title
 **How do socioeconomic and demographic factors influence the prevalence of different types of disabilities across U.S. states?**  
